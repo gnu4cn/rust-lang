@@ -1,3 +1,4 @@
 fn main() {
-    println!("Hello, world!");
+    // 这是注释。
+    println!("Hello, Cargo!");
 }
