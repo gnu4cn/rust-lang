@@ -93,6 +93,8 @@ Rust 语言也希望带给众多其他用户以支持；这里提到的只是一
 
 *表 1 - Ferris 表情含义*
 
+多数情况下，这里都会给出不会编译代码的正确版本。
+
 ## 本书的源码
 
 本书所产生的源码，可在 [Github: gnu4cn/rust-lang](https://github.com/gnu4cn/rust-lang) 下载到。
