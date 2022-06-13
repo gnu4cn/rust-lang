@@ -250,4 +250,53 @@ $ cargo new hello_cargo
 $ cd hello_cargo
 ```
 
+这第一个命令创建出了一个新的名为 `hello_cargo` 目录。这里就已将项目命名为了 `hello_cargo`，然后 Cargo 将其文件创建在了同名的目录里面。
 
+进入到 `hello_cargo` 目录并列出那些文件。就会看到 Cargo 已经为我们生成了两个文件和一个目录：一个 `Cargo.toml`文件与一个里头有着 `main.rs` 文件的 `src` 目录。
+
+`cargo new` 还初始化了一个新的、带有 `.gitignore` 文件的 Git 代码仓库。若是在一个既有的 Git 代码仓库运行的 `cargo new`，那么就不会生成那些 Git 文件；通过运用 `cargo new --vcs=git` 可重写此行为。
+
+> 注意：Git 是种常用的版本控制系统。可通过上面的 `--vcs` 命令行参数，让 `cargo new` 使用其他版本控制系统或不使用版本控制系统。请运行 `cargo new --help`命令来查看所有可用选项。
+
+
+文件名：`Cargo.toml`
+
+```toml
+[package]
+name = "hello_cargo"
+version = "0.1.0"
+edition = '2021'
+
+[dependencies]
+```
+
+*清单 1-2：由 `cargo new` 所生成的 `Cargo.toml` 的内容*
+
+该文件是 [TOML](https://toml.io/) （ *Tom's Obvious, Minimal Language* ） 格式的，这是 Cargo 的配置格式。
+
+该文件的第一行， `[package]`，是个小节标题，表示接下来的语句是在对一个包进行配置。随着往这个文件添加越来越多的信息，就会添加其他小节。
+
+接下来的三行，对 Cargo 用于编译程序所需的信息进行了配置：项目名称、版本号及要使用的 Rust 版本。在 [附录 E](Appendix_E.md) 中会讲到这个 `edition` 关键字。
+
+`Cargo.toml` 的最后一行，`[dependencies]`，是要列出项目全部依赖小节开始的地方。在 Rust 中，代码包被称为 *包裹（crates）*。此项目无需任何其他包裹，在第 2 章中的头一个项目，就会用到依赖包裹，因此在那时就会用到这个依赖小节。
+
+现在打开 `src/main.rs` 然后看看：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    println! ("Hello, World!");
+}
+```
+
+Cargo 以及为我们生成了一个 “Hello, World!” 的程序，这个自动生成的程序就跟之前在清单 1-1 中的一样！到现在，先前的项目与这个 Cargo 生成的项目的不同之处，就是 Cargo 是将代码放在那个 `src` 目录中的，同时在顶层目录还有了一个 `Cargo.toml` 配置文件。
+
+Cargo 希望那些源代码文件，存留在 `src` 目录里头。而顶层的项目目录，只用于 `README` 文件、许可证信息、配置文件及其他与代码无关的东西。使用 Cargo 有助于对项目的组织。一切都有了个地方，且一切都在各自的地方（there's a place for everything, and everything is in its place）。
+
+若没有使用 Cargo 来开始项目，就如同先前在 “Hello, World!” 项目中所做那样，那么仍旧可使用 Cargo 将其转换为一个项目。将项目代码移入到 `src` 目录并创建出一个适当的 `Cargo.toml` 文件来:
+
+```console
+$ cd hello_world
+$ cargo init
+```
