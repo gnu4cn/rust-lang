@@ -298,5 +298,7 @@ Cargo 希望那些源代码文件，存留在 `src` 目录里头。而顶层的�
 
 ```console
 $ cd hello_world
+$ mkdir src
+$ mv main.rs src/
 $ cargo init
 ```
