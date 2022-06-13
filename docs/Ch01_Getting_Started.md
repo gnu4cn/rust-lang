@@ -302,3 +302,22 @@ $ mkdir src
 $ mv main.rs src/
 $ cargo init
 ```
+
+### 构建和运行一个 Cargo 项目
+
+现在来看看在使用 Cargo 来构建和运行那个 “Hello, World!” 程序有什么不同之处！在 `hello_cargo` 目录，通过敲入下面的命令，来构建该项目：
+
+```console
+$ cargo build                                                                   ✔ 
+   Compiling hello_cargo v0.1.0 (/home/peng/rust-lang/projects/hello_cargo)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.45s
+```
+
+此命令创建出在 `target/debug/hello_cargo`（或 Windows 上的`target\debug\hello_cargo.exe`）中，而非当前目录下的一个可执行文件。可使用下面这个命令运行那个可执行程序：
+
+```console
+$ ./target/debug/hello_cargo # 或者在 Windows 上的 .\target\debug\hello_cargo.exe
+Hello, world!
+```
+
+
