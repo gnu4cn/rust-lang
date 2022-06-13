@@ -1,0 +1,26 @@
+{
+  "name": "rust-lang",
+  "version": "0.1.0",
+  "description": "Rust 官方书的中文版。",
+  "main": "index.js",
+  "scripts": {
+      "git-push": "git add . && git commit -m \"Updated.\" && git push"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gnu4cn/rust-lang.git"
+  },
+  "keywords": [
+    "Rust",
+    "编程语言",
+    "中文版",
+    "入门",
+    "教程"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gnu4cn/rust-lang/issues"
+  },
+  "homepage": "https://github.com/gnu4cn/rust-lang#readme"
+}
