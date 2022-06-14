@@ -377,4 +377,18 @@ $ cargo check                                                                   
 
 ### 发布目的的构建
 
+在项目最终准备好发布时，就可以使用 `cargo build --release` 来带优化地对其进行编译了。该命令将创建出一个位于 `target/release`，而非 `target/debug` 中的可执行文件。其中的那些优化，会令到项目的 Rust 代码运行得更快，不过开启这些优化，将增加程序编译的时间。这就是为什么有两种不同配置文件的原因：一个配置是为开发目的，在希望快速且频繁地对项目进行重新构建时使用的配置，而另一个，则是为构建要给到用户的、不会反复重新构建的、将尽可能快速运行的最终程序所用到的配置。在要对程序进行性能测试时，就一定要运行 `cargo build --release`，并对 `target/release` 中的可执行程序进行性能测试。
 
+### 约定俗成的 Cargo
+
+对于那些简单项目，相比于使用 `rustc`，Cargo 并未提供到很多价值，然而在程序变得愈加错综复杂时，他就会证明他的价值了。对于那些由多个代码箱（crates） 构成的复杂项目，让 Cargo 来对构建进行协调，就要容易得多。
+
+即使这个`hello_cargo` 项目如此，此刻也用到了将在接下来的 Rust 编程生涯中会用到的真正工具。事实上，对于在任何既有的 Rust 项目，都应使用下面这些命令，使用 Git 来检出代码，然后前往到项目目录，进而加以构建：
+
+```console
+$ git clone example.org/someproject
+$ cd someproject
+$ cargo build
+```
+
+更多有关 Cargo 的信息，请查看看[Cargo 文档](https://doc.rust-lang.org/cargo/)。
