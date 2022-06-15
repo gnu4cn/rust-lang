@@ -1,7 +1,7 @@
 use rand::Rng;
 use std::cmp::Ordering;
 use std::io;
-// use std::process;
+use std::process;
 
 fn main() {
     loop {
@@ -20,13 +20,13 @@ fn main() {
                 .read_line(&mut guess)
                 .expect("读取行失败......");
 
-            //if guess.trim().eq("Q") || guess.trim().eq("quit") { process::exit(0); }
+            if guess.trim().eq("Q") || guess.trim().eq("quit") { process::exit(0); }
 
-            let guess: u32 = guess.trim().parse().expect("请输入一个数字！");
-            // let guess: u32 = match guess.trim().parse() {
-            //    Ok(num) => num,
-            //    Err(_) => { println! ("请输入一个数字！"); continue },
-            //};
+            // let guess: u32 = guess.trim().parse().expect("请输入一个数字！");
+            let guess: u32 = match guess.trim().parse() {
+               Ok(num) => num,
+               Err(_) => { println! ("请输入一个数字！"); continue },
+            };
 
             println! ("你猜的数为：{}", guess);
 

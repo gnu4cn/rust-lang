@@ -596,3 +596,5 @@ quit
 thread 'main' panicked at '请输入一个数字！: ParseIntError { kind: InvalidDigit }', src/main.rs:25:51
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ```
+
+敲入 `quit` 就会退出这个游戏，
