@@ -566,3 +566,33 @@ $ cargo run                                                       101 ✘ 
 用户可一直通过键盘快捷键 `Ctrl-C`，来中断这个程序。不过还是有别的方法，来退出这头贪厌的怪兽，就像在 [将猜数与秘密数字比较](#comparing-the-guess-to-the-secret-number)中对 `parse` 方法讨论中提到的那样：在用户输入了非数字的答案时，程序就会崩溃。这里就利用了那个，来实现用户退出，如下所示：
 
 ```console
+$ cargo run
+   Compiling guessing_game v0.1.0 (/home/peng/rust-lang/projects/guessing_game)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.53s
+     Running `target/debug/guessing_game`
+
+---猜出这个数来！---
+请输入你猜的数。（ ‘Q/quit’ 退出游戏）
+50
+你猜的数为：50
+太小了！
+请输入你猜的数。（ ‘Q/quit’ 退出游戏）
+75
+你猜的数为：75
+太大了！
+请输入你猜的数。（ ‘Q/quit’ 退出游戏）
+62
+你猜的数为：62
+太大了！
+太小了！
+请输入你猜的数。（ ‘Q/quit’ 退出游戏）
+55
+你猜的数为：55
+你赢了！
+
+---猜出这个数来！---
+请输入你猜的数。（ ‘Q/quit’ 退出游戏）
+quit
+thread 'main' panicked at '请输入一个数字！: ParseIntError { kind: InvalidDigit }', src/main.rs:25:51
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+```
