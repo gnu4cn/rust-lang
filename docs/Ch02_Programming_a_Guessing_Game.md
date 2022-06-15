@@ -248,4 +248,65 @@ $ cargo run                ✔
 
 请记住，所谓代码箱，即为一些 Rust 源代码文件的集合。之前曾构建好的项目，则是一个 *二进制的代码箱（binary crate）*，那是个可执行程序。而 `rand` 代码箱，则是个 *库代码箱（library crate）*，这样的库代码箱，包含了预期将在其他程序中会用到的代码，同时库代码箱自身并不能执行（the `rand` crate is a *library crate*, which contains code intended to be used in other programs, and can't be executed on its own）。
 
+Cargo 对外部代码箱的协调能力，正是 Cargo 真正闪耀之处。在能够编写出用到 `rand` 库代码箱的代码之前，先要将 `Cargo.toml` 加以修改，将 `rand` 代码箱作为依赖包含进来。打开那个文件并将下面的行，添加到底部、那个 Cargo 创建出的`[dependencies]` 小节标题之下。要确保像这里一样，带着版本号地精确指明 `rand` 代码箱，否则此教程中的代码示例就不会工作。
+
+文件名：`Cargo.toml`
+
+```toml
+rand = "0.8.3"
+```
+
+在这 `Cargo.toml` 文件中，凡在某个标题之后的东西，都是那个小节的一部分，直到另一小节开始为止。在 `[dependencies]` 小节，告诉 Cargo 的是项目依赖了哪些外部代码箱（external crates），以及所需的这些代码箱版本。在此实例中，就指明了有着语义版本指示符（the semantic version specifier） `0.8.3` 的 `rand` 库代码箱。Cargo 能明白 [语义化版本控制（Sementic Versioning）](http://semver.org/)（有时也叫做 *`SemVer`*），这是编制版本号的标准。数字 `0.8.3` 实际上是 `^0.8.3` 的缩写，表示高于 `0.8.3` 却低于 `0.9.0` 的任何版本。Cargo 认为这些版本有着与 `0.8.3` 兼容的公共 APIs，同时这样的规定，确保了将获取到在本章中代码仍可编译的情况下，最新的补丁发布。那些 `0.9.0` 及更高的版本，无法保证接下来示例用到同样的 API。
+
+现在，在不修改任何代码的情况下，来构建一下这个项目，如清单 2-2 所示：
+
+```console
+$ cargo build
+    Updating crates.io index
+  Downloaded rand v0.8.3
+  Downloaded libc v0.2.86
+  Downloaded getrandom v0.2.2
+  Downloaded cfg-if v1.0.0
+  Downloaded ppv-lite86 v0.2.10
+  Downloaded rand_chacha v0.3.0
+  Downloaded rand_core v0.6.2
+   Compiling rand_core v0.6.2
+   Compiling libc v0.2.86
+   Compiling getrandom v0.2.2
+   Compiling cfg-if v1.0.0
+   Compiling ppv-lite86 v0.2.10
+   Compiling rand_chacha v0.3.0
+   Compiling rand v0.8.3
+   Compiling guessing_game v0.1.0 (file:///projects/guessing_game)
+    Finished dev [unoptimized + debuginfo] target(s) in 2.53s
+```
+
+*清单 2-2-1：在添加了作为依赖的 `rand` 代码箱后运行 `cargo build` 的输出（书上的输出）*
+
+```console
+$ cargo build              ✔ 
+    Updating crates.io index
+  Downloaded cfg-if v1.0.0
+  Downloaded rand_chacha v0.3.1
+  Downloaded rand_core v0.6.3
+  Downloaded getrandom v0.2.7
+  Downloaded ppv-lite86 v0.2.16
+  Downloaded rand v0.8.5
+  Downloaded libc v0.2.126
+  Downloaded 7 crates (773.8 KB) in 3.41s
+   Compiling libc v0.2.126
+   Compiling cfg-if v1.0.0
+   Compiling ppv-lite86 v0.2.16
+   Compiling getrandom v0.2.7
+   Compiling rand_core v0.6.3
+   Compiling rand_chacha v0.3.1
+   Compiling rand v0.8.5
+   Compiling guessing_game v0.1.0 (/home/peng/rust-lang/projects/guessing_game)
+    Finished dev [unoptimized + debuginfo] target(s) in 56.66s
+```
+
+*清单 2-2-2：在添加了作为依赖的 `rand` 代码箱后运行 `cargo build` 的输出（实际输出）*
+
+这里可能会看到不同的一些版本号（归功于 `SemVer`，这些不同版本号将与示例代码全都兼任！）、不同的输出行（取决于所在的操作系统），以及这些行可能以不同顺序出现。
+
 
