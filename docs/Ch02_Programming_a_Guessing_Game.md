@@ -170,4 +170,58 @@ io::stdin().read_line(&mut guess).expect("读取输入失败");
 
 不过这样的一个长代码行，难于阅读，因此最好将其分开为多个断行。在以 `.method_name()` 语法调用方法时，通过引入另起一行及缩进，来将长的代码行拆分为短代码行，通常是明智的。下面就来说说这一行完成了什么。
 
-前面讲过，`read_line`方法将用户敲入的东西，放入到传递给他的那个字符串中，然而 `read_line` 还会返回一个值 -- 在此实例中，返回的就是一个 `io::Result` 类型值。Rust 在他的标准库中，有着数个名为 `Result` 的类型：
+前面讲过，`read_line`方法将用户敲入的东西，放入到传递给他的那个字符串中，然而 `read_line` 还会返回一个值 -- 在此实例中，返回的就是一个 `io::Result` 类型值。Rust 在他的标准库中，有着数个名为 `Result` 的类型：这是一个泛型的 `Result`，对于那些子模组都有着特定版本，比如这里的 `io::Result`。`Result` 的那些类型都属于 [枚举（enumerations）](Ch06_Enums_and_Pattern_Matching.md#enums)，枚举常被写为 `enums`，枚举有着一套被称作 *变种（variants）* 的可能值。枚举常常是和 `match` 关键字一起使用的，而 `match` 则是一种条件判断，在符合某个条件时，就可以很方便地根据枚举中的哪个变种，来执行不同代码。
+
+第 6 章将深入涵盖到枚举数据结构。而这些 `Result` 类型的目的，则是对错误处理信息进行编码。
+
+这个 `Result` 的变种，就是 `Ok` 与 `Err`。`Ok` 变种表示该操作是成功的，而在 `Ok` 内部，就是成功生成的值。相反 `Err` 变种，则意味着操作失败了，同时 `Err` 包含了关于操作失败的方式与原因。
+
+`Result` 类型的那些值，跟其他任何类型都差不多，在这些值上都定义了一些方法。`io::Result` 实例，就有一个可供调用的 [`expect` 方法](https://doc.rust-lang.org/std/result/enum.Result.html#method.expect)。在这个 `io::Result` 实例是个 `Err` 变种时，那么`expect` 方法就会导致程序崩溃，并将传递给 `expect` 方法的参数显示出来。若 `read_line` 方法返回了一个 `Err`，那很可能是来自所采用操作系统错误的结果（if the `read_line` method returns an `Err`, it would likely be the result of an error coming from the underlying operating system）。而若该 `io::Result` 实例是个 `Ok` 值，那么 `expect` 方法就会取得那个 `Ok` 所保存的返回值，并只将该值返回，从而就可以使用到这个返回值。在此实例中，那个值，就是用户输入中的字节数目。
+
+若这里没有对 `expect` 方法进行调用，那么该程序会编译，不过会收到一条告警信息：
+
+```console
+$ cargo build                                                                                    ✔ 
+   Compiling guessing_game v0.1.0 (/home/peng/rust-lang/projects/guessing_game)
+warning: unused `Result` that must be used
+  --> src/main.rs:10:5
+   |
+10 | /     io::stdin()
+11 | |         .read_line(&mut guess);
+   | |_______________________________^
+   |
+   = note: `#[warn(unused_must_use)]` on by default
+   = note: this `Result` may be an `Err` variant, which should be handled
+
+warning: `guessing_game` (bin "guessing_game") generated 1 warning
+    Finished dev [unoptimized + debuginfo] target(s) in 0.48s
+```
+
+Rust 警告说不曾对返回自 `read_line` 的 `Result` 值进行使用，表示程序没有对可能的错误加以处理。
+
+消除该警告信息的正确方式，就是要老老实实地编写错误处理代码，而在这个实例中，则只要在问题发生时，崩溃掉这个程序即可，因此这里就可以使用 `expect`。在 [第 9 章](Ch09_Error_Handling.md#recoverable-errors-with-result) 会掌握到如何从错误中恢复过来。
+
+## 使用 `println!` 的占位符将值打印出来
+
+**Printing Values with `println!` Placeholders**
+
+紧接着那个结束花括号前面，就只有剩下的一行代码要讨论了：
+
+```rust
+    println! ("你猜的数是：{}", guess);
+```
+
+这行代码是将此刻包含了用户输入的那个字符串打印出来。其中的那套花括号 `{}` ，就是一个占位符（placeholder）：请将`{}`当作是些在那个地方留有一个值的小螃蟹。使用一些这样的花括号，就可以打印出多个值来：第一套花括号保留着在格式化字符串之后列出的第一个值，第二套保留着第二个值，如此等等。一个 `println!` 调用中多个值的打印，看起来会是下面这样：
+
+```rust
+let x = 5;
+let y = 10;
+
+println! ("x = {} 同时 y = {}", x, y);
+```
+
+此代码将打印出 `x = 5 同时 y = 10`。
+
+## 对第一部分的测试
+
+
