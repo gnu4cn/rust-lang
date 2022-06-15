@@ -9,7 +9,7 @@ fn main() {
 
     io::stdin()
         .read_line(&mut guess)
-        .expect("读取行失败");
+        .expect("读取行失败......");
 
     println! ("你猜的数为：{}", guess);
 }

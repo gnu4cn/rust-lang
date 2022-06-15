@@ -307,6 +307,39 @@ $ cargo build              ✔
 
 *清单 2-2-2：在添加了作为依赖的 `rand` 代码箱后运行 `cargo build` 的输出（实际输出）*
 
-这里可能会看到不同的一些版本号（归功于 `SemVer`，这些不同版本号将与示例代码全都兼任！）、不同的输出行（取决于所在的操作系统），以及这些行可能以不同顺序出现。
+这里可能会看到不同的一些版本号（归功于 `SemVer`，这些不同版本号将与示例代码全都兼容！）、不同的输出行（取决于所在的操作系统），以及这些行可能以不同顺序出现。
+
+在包含外部依赖时，Cargo 会从 *登记处（registry）* 拉取到那个依赖所需的全部最新版本的代码箱，而所谓登记处，则是 [Crates.io](https://crates.io/) 数据的一份拷贝。Crates.io 是 Rust 生态中的人们，发布给其他人使用的开放源代码项目的地方。
+
+在更新了登记处索引之后，Cargo 就对 `[denpendencies]` 小节进行查看，并下载所列代码箱中尚未下载的那些。在此实例中，尽管只列出了依赖 `rand`，Cargo 还抓取了其他 `rand` 赖以运作的一些代码箱。在下载了这些代码箱之后，Rust 会对他们进行了编译，并随后以这些可用的依赖，对这项目进行了编译。
+
+若不做任何修改，就立即再次运行 `cargo build`，那么除了那行 `Finished` 输出之外，就再也没有别的输出了。Cargo 明白他以及下载并编译好了那些依赖，还明白尚未对 `Cargo.toml` 文件做任何修改。Cargo 还知道，这里并未对项目代码做任何修改，因此他也没有对项目代码重新编译。既然无事可做，那么他就直接退出了。
+
+```console
+$ cargo build                                                            ✔ 
+    Finished dev [unoptimized + debuginfo] target(s) in 0.00s
+```
+
+若此时打开 `src/main.rs` 文件，做个细微修改，然后保存并再次构建，那么就只会看到下面这两行输出:
+
+```console
+cargo build                                                            ✔ 
+   Compiling guessing_game v0.1.0 (/home/peng/rust-lang/projects/guessing_game)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.50s
+```
+
+这些行显示 Cargo 只更新了对 `src/main.rs` 文件细微修改的构建。由于依赖不曾改变，因此 Cargo 清除他可以重用那些已经下载和编译好的依赖。
+
+### 使用 `Cargo.lock` 文件确保可重现的构建
+
+**Ensuring Reproducible Builds with the `Cargo.lock` File**
+
+Cargo 具备一种不论是自己还是其他要构建代码的人来说，确保每次都可以构建出同样程序组件（the same artifact）的机制：除非另有指定，Cargo 都将只使用在 `[denpendencies]` 小节中所指定的依赖版本。比如说下周 `0.8.4` 版本的 `rand` 就要释出，且那个版本包含了一个重要的错误修复，但也包含了一个会破坏咱们代码的特性撤回。为了应对这样的情况，Rust 在首次运行 `cargo build`时，就创建了 `Cargo.lock` 文件，也就是现在在 `guessing_game` 目录下就有这么个文件。
+
+在首次构建项目时，Cargo 会找出那些依赖满足条件的所有版本，并将其写入到这 `Cargo.lock` 文件。在今后对项目进行构建时，Cargo 就会查看是否存在那个 `Cargo.lock` 文件，并使用其中所指定的那些版本，而不会再次完成找出那些版本的工作了。这样就自动实现了可重现的构建。也就是说，得益于这个 `Cargo.lock` 文件，除非显式地升级了 `rand` 的版本号，项目将保持其版本为 `0.8.3`。
+
+### 更新代码箱来获取新版本
+
+**Updating a Crate to Get a New Version**
 
 
