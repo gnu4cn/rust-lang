@@ -284,7 +284,7 @@ $ cargo build
 *清单 2-2-1：在添加了作为依赖的 `rand` 代码箱后运行 `cargo build` 的输出（书上的输出）*
 
 ```console
-$ cargo build              ✔ 
+$ cargo build                                                      ✔ 
     Updating crates.io index
   Downloaded cfg-if v1.0.0
   Downloaded rand_chacha v0.3.1
@@ -342,4 +342,116 @@ Cargo 具备一种不论是自己还是其他要构建代码的人来说，确�
 
 **Updating a Crate to Get a New Version**
 
+在确实要更新某个代码箱时，Cargo 提供了 `update` 命令，该命令会忽略 `Cargo.lock` 文件，并找出与`Cargo.toml`中的那些规格相适合的全部最新版本。Cargo 随后将把这些版本写入到 `Cargo.lock` 文件。否则的话，默认 Cargo 就会只查找那些高于 `0.8.3` 且低于 `0.9.0` 的版本。在 `rand` 库代码箱已发布了两个新的 `0.8.4` 和 `0.9.0` 版本时，此时若运行 `cargo update`，就会看到下面的输出：
 
+```console
+$ cargo update
+    Updating crates.io index
+    Updating rand v0.8.3 -> v0.8.4
+```
+
+Cargo 忽略了那个 `0.9.0` 的发布。此刻还会注意到在 `Cargo.lock` 文件中，一处标记现在所用 `rand` 代码箱版本为 `0.8.4` 的改变。要使用版本 `0.9.0` 或任何 `0.9.x` 系列中某个版本的 `rand`，就必须将 `Cargo.toml` 更新为下面这样：
+
+```toml
+[dependencies]
+rand = "0.9.0"
+```
+
+在下次运行 `cargo build` 时，Cargo 就会更新可用代码箱的登记处，并根据所指定的新版本，重新对 `rand` 需求加以评估。
+
+关于 [Cargo](http://doc.crates.io/) 及 [Cargo 生态](http://doc.crates.io/crates-io.html)，有很多要讲的东西，这些在第 14 章会讨论到，而此时，了解上面这些就够了。Cargo 实现了非常便利的库重用，因此 Rust 公民们就能够编写出，从数个软件包组合而来的那些体量较小的项目。
+
+### 生成随机数
+
+现在就来开始使用 `rand` 库代码箱，生成用于猜测的数字。接下来的步骤就是更新 `src/main.rs`，如下清单 2-3 所示：
+
+文件名：`src/main.rs`
+
+```rust
+use std::io;
+use rand::Rng;
+
+fn main() {
+    println! ("猜出这个数来！");
+
+    let secret_number = rand::thread_rng().gen_range(1..101);
+
+    println! ("秘密数字为：{}", secret_number);
+
+    println! ("请输入你猜的数。");
+
+    let mut guess = String::new();
+
+    io::stdin()
+        .read_line(&mut guess)
+        .expect("读取行失败......");
+
+    println! ("你猜的数为：{}", guess);
+}
+```
+
+*清单 2-3：添加生成随机数的代码*
+
+首先，这里添加了那行 `use rand::Rng`。这 `Rng` 特质（the `Rng` trait）定义了一些随机数生成器实现的方法，而为了使用这些方法，此特质就必须要在作用域中。第 10 章将详细涵盖到特质（traits）。
+
+接下来在中间部分，添加了两行新代码。在第一行代码中，调用了 `rand::thread_rng` 函数，该函数给到了这里即将用到的特定随机数生成器：一个相对于当前执行线程，属于本地的随机数生成器，其用到的种子由操作系统提供。随后在这个随机数生成器实例上的 `gen_range` 方法。该方法是由前面 `use rand::Rng` 语句带入到作用域的 `Rng` 特质定义。这 `gen_range` 方法取的是一个范围表达式，这里用到的范围表达式，所采取的是 `start..end` 形式，该范围表达式包含了左边界，但排除了右边界，因此就要指定 `1..101` 来求得一个 `1` 到 `100` 之间的数字。或者也可以传递范围 `1..=100`，这是等价的。
+
+> 注意：对于不知道到底该使用那个 Rust 特质，以及要调用代码箱的那些方法和函数的情况，那么每个代码箱都有着如何使用他的说明文档。Cargo 的另一灵巧特性，便是通过运行 `cargo doc --open` 命令，就会构建出由全部本地依赖提供的文档来，并在浏览器中打开这些文档。比如说若对 `rand` 这个代码箱的其他功能感兴趣，那么运行 `cargo doc --open` 命令然后点击左侧边栏中的 `rand` 即可进一步了解。
+
+那第二个新行，则是打印出那个秘密数字。在开发这个程序期间，这是有用的，这样能够对程序进行测试，不过在最终版本那里就会删除这行代码。若程序在一开始就打印出谜底，显然这就算不上是个游戏了。
+
+尝试运行几次这个程序：
+
+```console
+$ cargo run                                                           ✔  4s  
+   Compiling guessing_game v0.1.0 (/home/peng/rust-lang/projects/guessing_game)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.54s
+     Running `target/debug/guessing_game`
+猜出这个数来！
+随机生成的秘密数字为：40
+请输入你猜的数。
+86
+你猜的数为：86
+
+$ cargo run                                                           ✔  9s  
+    Finished dev [unoptimized + debuginfo] target(s) in 0.00s
+     Running `target/debug/guessing_game`
+猜出这个数来！
+随机生成的秘密数字为：30
+请输入你猜的数。
+27
+你猜的数为：27
+
+```
+
+就会得到不同的随机数字，并且他们都应是 `1` 到 `100` 之间的数字。非常棒！
+
+## 将猜数与秘数相比较
+
+既然有了用户输入和随机数，就可以加以比较了。比较的步骤在下面的清单 2-4 中给出了。请注意这个代码还不会编译，原因后面会解释。
+
+文件名：`src/main.rs`
+
+```rust
+use rand::Rng;
+use std::cmp::Ordering;
+use std::io;
+
+fn main() {
+    // --跳过前面的代码--
+
+    println! ("你猜的数为：{}", guess);
+
+    match guess.cmp(&secret_number) {
+        Ordering::Less => println! ("太小了！"),
+        Ordering::Greater => println! ("太大了！"),
+        Ordering::Equal => println! ("你赢了！"),
+    }
+}
+```
+
+*清单 2-4：对比较两个数可能的返回值进行处理*
+
+首先这里添加了另一个 `use` 语句，将标准库的一个名为 `std::cmp::Ordering` 的类型，带入到作用域。这 `Ordering` 了新是另一个枚举，且其有着 `Less`、`Greater` 和 `Equal` 共计三个变种。这些就是在对两个值进行比较时，三个可能的输出了。
+
+随后在该程序底部，添加了用到这 `Ordering` 类型的五行新代码。其中的 `cmp` 方法是对两个值进行比较，并可在任何被比较的东西上进行调用。
