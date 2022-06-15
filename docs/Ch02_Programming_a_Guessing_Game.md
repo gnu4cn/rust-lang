@@ -224,4 +224,28 @@ println! ("x = {} 同时 y = {}", x, y);
 
 ## 对第一部分的测试
 
+下面就来测试一下这猜数游戏的第一部分。用 `cargo run` 运行他：
+
+```console
+$ cargo run                ✔ 
+   Compiling guessing_game v0.1.0 (/home/peng/rust-lang/projects/guessing_game)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.68s
+     Running `target/debug/guessing_game`
+猜出这个数来！
+请输入你猜的数。
+6
+你猜的数为：6
+```
+
+此刻，这游戏的第一部分就算完成了：这里正从键盘获取到输入，并随后将输入打印出来。
+
+
+## 生成秘密数字
+
+接下来，就需要生成一个用户将要试着去猜的秘密数字了。生成的秘密数字应每次都不相同，这样这游戏在多次玩的时候才有趣。为了不让这个游戏太难，这里要用一个 `1` 到 `100` 之间的随机数。Rust 在其标准库中尚未包含随机数功能。不过 Rust 团队还真的提供了一个 [`rand` 代码箱](https://crates.io/crates/rand)，这里就姑且把这样的代码箱，称之为功能吧。
+
+### 运用代码箱（a Crate） 获取到更多功能
+
+请记住，所谓代码箱，即为一些 Rust 源代码文件的集合。之前曾构建好的项目，则是一个 *二进制的代码箱（binary crate）*，那是个可执行程序。而 `rand` 代码箱，则是个 *库代码箱（library crate）*，这样的库代码箱，包含了预期将在其他程序中会用到的代码，同时库代码箱自身并不能执行（the `rand` crate is a *library crate*, which contains code intended to be used in other programs, and can't be executed on its own）。
+
 
