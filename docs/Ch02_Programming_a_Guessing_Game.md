@@ -426,7 +426,7 @@ $ cargo run                                                           ✔ 
 
 就会得到不同的随机数字，并且他们都应是 `1` 到 `100` 之间的数字。非常棒！
 
-## 将猜数与秘数相比较
+## <a id="comparing-the-guess-to-the-secret-number"></a>将猜数与秘数相比较
 
 既然有了用户输入和随机数，就可以加以比较了。比较的步骤在下面的清单 2-4 中给出了。请注意这个代码还不会编译，原因后面会解释。
 
@@ -538,4 +538,31 @@ $ cargo run                                                       101 ✘ 
 
 **Allowing Multiple Guesses with Looping**
 
+关键字 `loop` 创建出无限循环。这里就要添加一个循环，来让用户有更多机会去猜数：
 
+文件名：`src/main.rs`
+
+```rust
+    // --跳过--
+
+    println! ("随机生成的秘密数字为：{}", secret_number);
+
+    loop {
+        println! ("请输入你猜的数。");
+
+        // --跳过--
+
+        match guess.cmp(&secret_number) {
+            Ordering::Less => println! ("太小了！"),
+            Ordering::Greater => println! ("太大了！"),
+            Ordering::Equal => { println! ("你赢了！"); break },
+        }
+    }
+}
+```
+
+可以看到，这里已将自猜数输入提示开始的全部代码，移入到循环中了。请确保循环中的那些代码行，都另外缩进四个空格，然后再次运行这个程序。现在程序将会一直要求另一猜数，这实际上引入了新的问题。好像是用户无法退出了！
+
+用户可一直通过键盘快捷键 `Ctrl-C`，来中断这个程序。不过还是有别的方法，来退出这头贪厌的怪兽，就像在 [将猜数与秘密数字比较](#comparing-the-guess-to-the-secret-number)中对 `parse` 方法讨论中提到的那样：在用户输入了非数字的答案时，程序就会崩溃。这里就利用了那个，来实现用户退出，如下所示：
+
+```console

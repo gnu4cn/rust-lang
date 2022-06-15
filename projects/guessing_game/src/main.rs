@@ -1,29 +1,40 @@
 use rand::Rng;
 use std::cmp::Ordering;
 use std::io;
+use std::process;
 
 fn main() {
-    println! ("猜出这个数来！");
+    loop {
+        println! ("\n---猜出这个数来！---");
 
-    let secret_number: u32 = rand::thread_rng().gen_range(1..101);
+        let secret_number: u32 = rand::thread_rng().gen_range(1..101);
 
-    println! ("随机生成的秘密数字为：{}", secret_number);
+        // println! ("随机生成的秘密数字为：{}", secret_number);
 
-    println! ("请输入你猜的数。");
+        loop {
+            println! ("请输入你猜的数。（ ‘Q/quit’ 退出游戏）");
 
-    let mut guess: String = String::new();
+            let mut guess: String = String::new();
 
-    io::stdin()
-        .read_line(&mut guess)
-        .expect("读取行失败......");
+            io::stdin()
+                .read_line(&mut guess)
+                .expect("读取行失败......");
 
-    let guess: u32 = guess.trim().parse().expect("请输入一个数字！");
+            if guess.trim().eq("Q") || guess.trim().eq("quit") { process::exit(0); }
 
-    println! ("你猜的数为：{}", guess);
+            // let guess: u32 = guess.trim().parse().expect("请输入一个数字！");
+            let guess: u32 = match guess.trim().parse() {
+                Ok(num) => num,
+                Err(_) => { println! ("请输入一个数字！"); continue },
+            };
 
-    match guess.cmp(&secret_number) {
-        Ordering::Less => println! ("太小了！"),
-        Ordering::Greater => println! ("太大了！"),
-        Ordering::Equal => println! ("你赢了！"),
+            println! ("你猜的数为：{}", guess);
+
+            match guess.cmp(&secret_number) {
+                Ordering::Less => println! ("太小了！"),
+                Ordering::Greater => println! ("太大了！"),
+                Ordering::Equal => {println! ("你赢了！"); break},
+            }
+        }
     }
 }
