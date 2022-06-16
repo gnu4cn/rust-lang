@@ -597,4 +597,64 @@ thread 'main' panicked at '请输入一个数字！: ParseIntError { kind: Inval
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ```
 
-敲入 `quit` 就会退出这游戏，不过正如所注意到的，这样做将就要敲入别的非数字输入。至少可以是这种做法是次优的；这里想要在猜到了正确
+敲入 `quit` 就会退出这游戏，不过正如所注意到的，这样做将就要敲入别的非数字输入。至少可以是这种做法是次优的；这里想要在猜到了正确数字时，游戏也要停止。
+
+## 猜对后的退出
+
+下面就来通过添加一条 `break` 语句，将游戏编程为在用户赢了时退出：
+
+文件名：`src/main.rs`
+
+```rust
+        // --跳过--
+
+        match guess.cmp(&secret_number) {
+            Ordering::Less => println! ("太小了！"),
+            Ordering::Greater => println! ("太大了！"),
+            Ordering::Equal => {
+                println! ("你赢了！"); 
+                break
+            },
+        }
+    }
+}
+```
+
+在 `你赢了！` 之后添加上 `break` 代码行，就令到游戏在用户猜中了秘密数字时，退出那个循环。由于该循环是 `main` 函数体的最后部分，因此退出循环也意味着退出这个程序。
+
+
+## 无效输入的处理
+
+为了进一步改进游戏表现，而不要在用户输入了非数字时将程序崩溃掉，那么接下来就要使得游戏忽略非数字，从而用户可以继续猜数。通过把`guess`从 `String` 转换为 `u32` 的那行加以修改，来完成这个目的，如下面的清单 2-5 所示：
+
+文件名：`src/main.rs`
+
+```rust
+        // --跳过--
+
+        io::stdin()
+            .read_line(&mut guess)
+            .expect("读取行失败......");
+
+        if guess.trim().eq("Q") || guess.trim().eq("quit") { process::exit(0); }
+
+        // let guess: u32 = guess.trim().parse().expect("请输入一个数字！");
+        let guess: u32 = match guess.trim().parse() {
+           Ok(num) => num,
+           Err(_) => { println! ("请输入一个数字！"); continue },
+        };
+
+        println! ("你猜的数为：{}", guess);
+
+        // --跳过--
+```
+
+*清单 2-5：忽略非数字的猜解进而询问另一猜数，而不再是崩溃掉程序*
+
+这里将原来的 `expect` 调用，转换到了一个 `match` 表达式，而实现了一错误就程序崩溃，到对错误进行处理的转变。请记住 `parse` 返回的是个 `Result` 类型，而 `Result` 则是个枚举，有着变种 `Ok` 和 `Err`。与先前对 `cmp` 方法返回结果 `Ordering` 的处理一样，这里运用了一个 `match` 表达式。
+
+在 `parse` 能够成功将那个字符串，转换为数字时，他就会返回一个包含了所得结果数的 `Ok` 值。那 `Ok` 值就会匹配上第一个支臂的模式，而这个 `match` 表达式将值返回 `parse` 产生的、放在`Ok` 值里头的那个 `num` 值。那个数字就会刚好放在这里想要他呆的地方，即这里正在创建的那个新 `guess` 变量了。
+
+在 `parse` 无法将那个字符串转换成数字时，他就会返回一个包含了有关该错误详细信息的 `Err` 值。该 `Err` 值不与第一个 `match` 支臂中的 `Ok(num)` 模式匹配，不过却正好匹配第二个支臂中的 `Err(_)` 模式。其中的下划线，`_`，是个收集错误信息的值（a catch-all value）；在此示例中，就是要匹配所有 `Err` 值，而不管这些 `Err` 值中包含了什么信息。那么程序就会执行第二支臂的代码，即 `continue`，这是告诉程序前往到那个 `loop` 循环的下一次迭代，进而询问另一个猜数。就这样，有效地方让程序忽略了全部 `parse` 可能会发生的错误了！
+
+
