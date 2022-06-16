@@ -183,3 +183,52 @@ error: could not compile `variables` due to previous error
 现在已经完成变量运行机制的探讨，接卸来就要看看这些变量可以有的那些其余数据类型了。
 
 
+## 数据类型
+
+Rust 的所有值，都属于某种确切的 *数据类型（data type）*，数据类型告诉 Rust 所指定的是何种数据，进而 Rust 才知道该怎样使用那个数据。接下来会看看两个数据类型的子集：标量（scalar）类型与复合（compound）类型。
+
+请牢记 Rust 是门 *静态类型（statically typed）* 语言，这就意味着在运行时，他必须清楚所有变量的类型。基于值与对变量的使用方式，编译器通常可以推断出希望变量使用何种类型来。在可能有许多中类型的情况下，就如同第 2 章 [将猜数与秘密数字比较](Ch02_Programming_a_Guessing_Game.md#compring-the-guess-to-the-secret-number) 小节中，使用 `parse` 把一个 `String` 转换成数字类型时，就必须添加一个类型注释，如下面这样：
+
+```rust
+let guess: u32 = "42".parse().expect("这不是个数字！");
+```
+
+若这里添加类型注解，那么 Rust 就会给出下面的错误，表示编译器需要更多信息来明白这里想要使用何种类型：
+
+```console
+$ cargo build                                                  101 ✘ 
+   Compiling variables v0.1.0 (/home/peng/rust-lang/projects/variables)
+error[E0282]: type annotations needed
+  --> src/main.rs:19:9
+   |
+19 |     let guess = "42".parse().expect("那不是个数字！");
+   |         ^^^^^ consider giving `guess` a type
+
+For more information about this error, try `rustc --explain E0282`.
+error: could not compile `variables` due to previous error
+```
+
+接下来就会见识到其他数据类型的类型注解。
+
+
+## 标量类型（Scalar Types）
+
+*标量* 类型，表示单个值。Rust 有着四个主要的标量类型：整数、浮点数、布尔值与字符。这些类型，其他语言也有。下面就深入看看他们在 Rust 中是怎样工作的。
+
+### 整形（Integer Types）
+
+*整数* 是不带小数部分的数。在第 2 章中就已用到一种整数类型，即 `u32` 类型。这种类型声明表示变量关联的值，应是个无符号的、占据 32 个二进制位空间的整数（有符号整数以 `i` 而不是 `u` 开头）。下面的表 3-1 给出了 Rust 中内建的那些整数类型。可使用这些变种中的任何一个，取声明出某个整数值的类型。
+
+*表 3-1：Rust 中的整数类型*
+
+
+| 长度 | 有符号 | 无符号 |
+| :-: | :- | :- |
+| 8 位 | `i8` | `u8` |
+| 16 位 | `i16` | `u16` |
+| 32 位 | `i32` | `u32` |
+| 64 位 | `i64` | `u64` |
+| 128 位 | `i128` | `u128` |
+| 架构决定 | `isize` | `usize` |
+
+
