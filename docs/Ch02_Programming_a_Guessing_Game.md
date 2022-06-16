@@ -597,4 +597,4 @@ thread 'main' panicked at '请输入一个数字！: ParseIntError { kind: Inval
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ```
 
-敲入 `quit` 就会退出这个游戏，
+敲入 `quit` 就会退出这游戏，不过正如所注意到的，这样做将就要敲入别的非数字输入。至少可以是这种做法是次优的；这里想要在猜到了正确
