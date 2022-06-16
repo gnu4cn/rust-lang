@@ -127,6 +127,18 @@ fn main() {
     println! ("x 的值为：{}", x);
 }
 ```
+
+```console
+内部作用域中 x 的值为：12
+x 的值为：6
+```
+
+> 注意：遮蔽特性的使用，不需要 `mut` 关键字。
+
+这个程序首先将 `x` 绑定到值 `5`。随后通过重复 `let x =`，取原来的值并加上 `1`，而对 `x` 做了遮蔽操作，因此 `x` 的值此时就为 `6` 了。之后，在一个内部作用域内，第三个 `let` 语句也对 `x` 进行了遮蔽，将先前的值乘以 `2`，就给到 `x` 一个值 `12`。在那个内部作用域完毕时，那个内部遮蔽就结束了，同时 `x` 回到仍为 `6`。在运行这个程序时，他将输出下面的内容：
+
+
+```console
 $ cargo run                                                        ✔ 
    Compiling variables v0.1.0 (/home/peng/rust-lang/projects/variables)
     Finished dev [unoptimized + debuginfo] target(s) in 0.47s
@@ -135,6 +147,39 @@ $ cargo run                                                        ✔
 x 的值为：6
 ```
 
-> 注意：遮蔽特性的使用，不需要 `mut` 关键字。
+由于在不小心而尝试在不带 `let` 关键字而重新赋值给该变量时，会收到编译时错误，因此遮蔽不同于构造一个`mut` 的变量。通过使用 `let` 关键字，就可以在值上执行少量的转换操作，而在这些转换操作完成后又将该变量置入到不可变。
+
+`mut` 与遮蔽的另一不同之处，则是由于再次使用`let`关键字时，有效地创建出了一个新变量，因此就可以改变那个值的类型，而仍然重用那同样的变量名字。比如说程序要通过用户输入若干空格字符，来询问用户希望在一些文本之间留多少个空格，而此时又要将用户输入的若干个空格，保存为一个数字：
+
+```rust
+let spaces = "    ";
+let spaces = spaces.len();
+```
+
+第一个 `spaces` 变量是字符串类型，而第二个 `spaces` 变量则是数字类型。遮蔽因此而免于不得不苦苦思索不同的变量名字，诸如 `spaces_str` 及 `spaces_num`；相反，是可以重新较简单的 `spaces` 名称。然而，若尝试对这个变量使用 `mut` 关键字，就会收到一个编译时错误，如下所示：
+
+```rust
+let mut spaces = "    ";
+spaces = spaces.len();
+```
+
+错误是说不允许转变变量类型：
+
+```console
+$ cargo run                                                        ✔ 
+   Compiling variables v0.1.0 (/home/peng/rust-lang/projects/variables)
+error[E0308]: mismatched types
+  --> src/main.rs:14:14
+   |
+13 |     let mut spaces = "    ";
+   |                      ------ expected due to this value
+14 |     spaces = spaces.len();
+   |              ^^^^^^^^^^^^ expected `&str`, found `usize`
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `variables` due to previous error
+```
+
+现在已经完成变量运行机制的探讨，接卸来就要看看这些变量可以有的那些其余数据类型了。
 
 

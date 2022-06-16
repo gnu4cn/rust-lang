@@ -9,4 +9,9 @@ fn main() {
     }
 
     println! ("x 的值为：{}", x);
+    
+    let mut spaces = "    ";
+    spaces = spaces.len();
+
+    println! ("spaces 为：{}", spaces);
 }
