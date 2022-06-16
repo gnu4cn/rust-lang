@@ -1,7 +1,12 @@
 fn main() {
-    let mut x = 5;
-    println! ("x 的值为：{}", x);
+    let x = 5;
 
-    x = 6;
+    let x = x + 1;
+
+    {
+        let x = x * 2;
+        println! ("内部作用域中 x 的值为：{}", x);
+    }
+
     println! ("x 的值为：{}", x);
 }
