@@ -657,4 +657,79 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 
 在 `parse` 无法将那个字符串转换成数字时，他就会返回一个包含了有关该错误详细信息的 `Err` 值。该 `Err` 值不与第一个 `match` 支臂中的 `Ok(num)` 模式匹配，不过却正好匹配第二个支臂中的 `Err(_)` 模式。其中的下划线，`_`，是个收集错误信息的值（a catch-all value）；在此示例中，就是要匹配所有 `Err` 值，而不管这些 `Err` 值中包含了什么信息。那么程序就会执行第二支臂的代码，即 `continue`，这是告诉程序前往到那个 `loop` 循环的下一次迭代，进而询问另一个猜数。就这样，有效地方让程序忽略了全部 `parse` 可能会发生的错误了！
 
+现在程序各方面就应如预期那样工作了。就来试试：
 
+```console
+$ cargo run                                                       ✔ 
+   Compiling guessing_game v0.1.0 (/home/peng/rust-lang/projects/guessing_game)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/guessing_game`
+
+---猜出这个数来！---
+请输入你猜的数。（ ‘Q/quit’ 退出游戏）
+50
+你猜的数为：50
+太小了！
+请输入你猜的数。（ ‘Q/quit’ 退出游戏）
+75
+你猜的数为：75
+你赢了！
+```
+
+非常棒！只需最后一个小的优化，就将完成这个猜数游戏了。没忘记这个程序仍是把秘密数字打印出来的吧。那样做对测试来说没有问题，但却毁掉了这个游戏。这里就来将输出了秘密数字的那个 `prinln!` 给删掉。下面的清单 2-6 给出了最终代码。
+
+文件名：`src/main.rs`
+
+```rust
+use rand::Rng;
+use std::cmp::Ordering;
+use std::io;
+use std::process;
+
+fn main() {
+    loop {
+        println! ("\n---猜出这个数来！---");
+
+        let secret_number: u32 = rand::thread_rng().gen_range(1..101);
+
+        // println! ("随机生成的秘密数字为：{}", secret_number);
+
+        loop {
+            println! ("请输入你猜的数。（ ‘Q/quit’ 退出游戏）");
+
+            let mut guess: String = String::new();
+
+            io::stdin()
+                .read_line(&mut guess)
+                .expect("读取行失败......");
+
+            if guess.trim().eq("Q") || guess.trim().eq("quit") { process::exit(0); }
+
+            // let guess: u32 = guess.trim().parse().expect("请输入一个数字！");
+            let guess: u32 = match guess.trim().parse() {
+               Ok(num) => num,
+               Err(_) => { println! ("请输入一个数字！"); continue },
+            };
+
+            println! ("你猜的数为：{}", guess);
+
+            match guess.cmp(&secret_number) {
+                Ordering::Less => println! ("太小了！"),
+                Ordering::Greater => println! ("太大了！"),
+                Ordering::Equal => {
+                    println! ("你赢了！"); 
+                    break
+                },
+            }
+        }
+    }
+}
+```
+
+*清单 2-6：完全的猜数游戏代码*
+
+## 小结
+
+到了这里，就成功构建了这个猜数游戏。恭喜！
+
+该项目以动手的方式，教了许多新的 Rust 概念：`let`，`match` 等关键字，函数、运用外部代码箱及更多。在接下来的几章中，会更深入地掌握这些概念。第 3 章涵盖了大多数编程语言都有的一些概念，诸如变量、数据类型及函数，并展示了如何在 Rust 中使用他们。第 4 章对 Rust 中的所有权（ownership）进行了探索，所有权是一项令到 Rust 不同于其他语言的特性。第 5 章对结构体（structs）和方法语法（method syntax）进行了讨论，而第 6 章解释了枚举的原理。
