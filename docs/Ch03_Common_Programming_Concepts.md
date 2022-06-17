@@ -614,3 +614,106 @@ $ cargo run                                                        ✔
      Running `target/debug/functions`
 度量值为：5h
 ```
+
+由于这里以 `5` 作为 `value` 的值，以 `h` 作为 `unit_label` 的值，调用了这个函数，因此该程序的输出，就包含了这些值。
+
+### 语句及表达式
+
+函数体是由一系列语句构成，这些语句可以是表达式结束的，也可以不是。到目前为止，所讲到的函数，都没有包含语句以表达式结束，不过有见到过表达式作为语句一部分的情况。由于 Rust 是基于表达式的语言，那么这一点就很重要，是要掌握的特征。其他语言并无这同样的特征，因此接下来就要看看语句和表达式究竟是何物，以及他们对函数体影响的不同。
+
+*语句（statements）* 是一些完成某些操作而不返回值的指令。 *表达式（expressions）* 会求得一个结果值。来看看一些示例。
+
+这里事实上已经用到了语句和表达式。创建一个变量，并以 `let` 关键字将一个值指派给他，就是一条语句。下面的清单 3-1 中，`let y = 6;` 就是一条语句。
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let y = 6;
+}
+```
+
+*清单 3-1：包含一条语句的一个 `main` 函数*
+
+函数定义也是语句；上面的整个示例本身就是一条语句。
+
+语句不会返回值。因此就无法将一条 `let` 语句，指派给另一变量了，就如同下面代码尝试完成的那样；这就会得到一条错误消息：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let x = (let y = 6);
+}
+```
+
+当运行这个程序时，将收到的错误如下所示：
+
+```console
+$ cargo run                                                        ✔ 
+   Compiling functions v0.1.0 (/home/peng/rust-lang/projects/functions)
+error: expected expression, found statement (`let`)
+ --> src/main.rs:2:14
+  |
+2 |     let x = (let y = 6);
+  |              ^^^^^^^^^
+  |
+  = note: variable declaration using `let` is a statement
+
+error[E0658]: `let` expressions in this position are unstable
+ --> src/main.rs:2:14
+  |
+2 |     let x = (let y = 6);
+  |              ^^^^^^^^^
+  |
+  = note: see issue #53667 <https://github.com/rust-lang/rust/issues/53667> for more information
+
+warning: unnecessary parentheses around assigned value
+ --> src/main.rs:2:13
+  |
+2 |     let x = (let y = 6);
+  |             ^         ^
+  |
+  = note: `#[warn(unused_parens)]` on by default
+help: remove these parentheses
+  |
+2 -     let x = (let y = 6);
+2 +     let x = let y = 6;
+  | 
+
+For more information about this error, try `rustc --explain E0658`.
+warning: `functions` (bin "functions") generated 1 warning
+error: could not compile `functions` due to 2 previous errors; 1 warning emitted
+```
+
+其中的 `let y = 6` 语句不会返回值，因此这里就没有任何东西给 `x` 绑定。这不同于其他语言所发生的事情，譬如 C 和 Ruby 等，在其他语言中，赋值操作返回的是所赋的那个值。在那些语言中，就可以写下 `x = y = 6`，而让 `x` 与 `y` 同时有了值 `6`；但在 Rust 中却不是这样的。
+
+表达式会求解为一个值，进而构成往后编写的 Rust 代码的绝大部分。设想一个数学运算，比如 `5 + 6`，这就是个将求值为值 `11` 的表达式。
+
+表达式可作为语句的一部分：在清单 3-1 中，语句 `let y = 6;` 里的 `6` 就是一个求值到 `6` 的表达式。对函数的调用，同样是个表达式。对宏的调用，也是个表达式。以花括号创建出的新代码块，还是个表达式，比如：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let y = {
+        let x = 3;
+        x + 1
+    };
+
+    println! ("y 的值为：{}", y);
+}
+```
+
+其中的这个表达式：
+
+```rust
+{
+    let x = 3;
+    x + 1
+}
+```
+
+在这个示例中，就是一个求值为 `4` 的表达式。其求得的值 `4` 会作为那条 `let` 语句的一部分，被绑定到 `y`。请注意那代码块最后的 `x + 1` 的代码行，并没有分号（`;`），而与到目前为止所见到的大多数代码行不同。表达式并不包含最后的分号。若将分号家到表达式末端，就会将其变成一条语句，进而就不再返回值了。在接下来对函数返回值与表达式的探索过程中，请牢记这一点。
+
+> 注：若在上面代码块中的 `x + 1` 后面加上分号，那么 `y` 的值将为 `()` 这一特殊值（类似于 `null`）。进而在接下来的 `println!` 语句中导致出错。
