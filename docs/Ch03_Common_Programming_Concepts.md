@@ -559,4 +559,58 @@ Hello, world!
 
 ### 参数
 
+可将函数定义为有 *参数（parameters）*，所谓参数，就是作为函数签名一部分的一些特殊变量（which are special variables that are part of a function's signature）。在函数有着参数时，就可以提供到函数与这些参数对应的具体值。技术上讲，提供到函数的具体值叫做 *实参（arguments）*，不过在一般聊天中，人们会将 *形参（parameters）* 与 *实参（arguments）* 两个说法互换使用，既指函数定义中的变量，又表示调用函数时所传入的具体值。
 
+在下面这个版本的 `another_function` 中，就要添加一个参数：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    another_function(-5);
+}
+
+fn another_function(x: i32) {
+    println! ("x 的值为：{}", x);
+}
+```
+
+试着运行这个程序；就会得到以下输出：
+
+```console
+$ cargo run                                                        ✔ 
+   Compiling functions v0.1.0 (/home/peng/rust-lang/projects/functions)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.48s
+     Running `target/debug/functions`
+x 的值为：-5
+```
+
+`another_function` 的声明，有着一个名为 `x` 的参数。`x` 的类型被指定为 `i32`。在将 `-5` 传入到 `another_function` 时，那个 `println!` 的宏，就将 `-5` 放在那个格式化字符串中两个花括号所在的地方。
+
+在函数签名中，*必须* 声明各个参数的类型。这是 Rust 设计中深思熟虑的决定：在函数定义中要求类型注解，就意味着编译器几近无需在代码中的什么地方使用那些函数的情况下，就能搞清楚是要何种类型（requiring type annotations in function definitions means that the compiler almost never needs you to use them elsewhere in the code to figure out what type you mean）。
+
+在定义多个参数时，要用逗号（`,`）将那些参数声明分隔开，像下面这样：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    print_labeled_measurement(5, 'h');
+}
+
+fn print_labeled_measurement(value: i32, unit_label: char) {
+    println! ("度量值为：{}{}", value, unit_label);
+}
+```
+
+此示例创建了一个名为 `print_labeled_measurement`的、有两个参数的方法。第一个参数名为 `value`，且类型为 `i32`。第二个名为 `unit_label`，同时类型为 `char`。该函数随后会打印出同时包含 `value` 与 `unit_label` 的文本。
+
+来尝试运行此代码。将`functions` 项目中的 `src/main.rs` 中的当前程序，用上面的示例进行替换，并使用 `cargo run` 运行当前程序：
+
+```console
+$ cargo run                                                        ✔ 
+   Compiling functions v0.1.0 (/home/peng/rust-lang/projects/functions)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.45s
+     Running `target/debug/functions`
+度量值为：5h
+```
