@@ -1,11 +1,10 @@
 fn main() {
-    let x = (500, 6.4, 1);
+    let tup = (1, 0.5, "元组元素");
 
-    let five_hundred = x.0;
+    println! ("tup.1：{}", tup.1);
 
-    let six_point_four = x.1;
+    let months: [&str; 12] = ["January", "February", "March", "April", "May", "June", "July",
+                  "August", "September", "October", "November", "December"];
 
-    let one = x.2;
-
-    println! ("x.0： {}, x.1：{}, x.2：{}", five_hundred, six_point_four, one);
+    println! ("七月：{}", months[6]);
 }
