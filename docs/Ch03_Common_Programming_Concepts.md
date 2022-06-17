@@ -250,3 +250,23 @@ error: could not compile `variables` due to previous error
 | 八进制（Octal） | `0o77` |
 | 二进制（Binary） | `0b1111_0000` |
 | 字节（仅限 `u8`，Byte(`u8` only)） | `b'A'` |
+
+那么怎样知道，该用何种类型的整数呢？在不确定的时候，一般来说 Rust 默认的整数类型，即是不错的开场：整数类型默认为 `i32`。而要用到 `isize` 或 `usize` 的主要场合，则是在对一些类别的集合进行索引的时候（the primary situation in which you'd use `isize` or `usize` is when indexing some sort of collection）。
+
+> 关于 **整数溢出**
+>
+> 比方说有个类型为 `u8` 的、可保存 `0` 到 `255` 之间值的变量。在尝试将该变量修改为超出那个范围的某个值，比如 `256` 时，就会发生 *整型溢出（integer overflow）*，而整型溢出又可导致两种行为之一。在以调试模式进行程序编译时，Rust 就会包含整数溢出的检查，在发生了整数溢出时，就会导致程序进入 *错误（panic）* 状态。对于程序因错误而退出执行这种情况，Rust 使用了 猝死（paniking） 这个词语；在第 9 章中的 [带有 `panic!` 宏的不可恢复性错误](Ch09_Error_Handling.md#unrecoverable-errors-with-panic) 小节，将更深入地讨论到程序因错误而终止运行的情况。
+>
+> 在以 `--release` 开关进行发布模式的编译时，Rust 就不会包含对引起程序终止运行的整数溢出的检查。这时若发生了溢出，Rust 就会执行 *二进制补码封装（two's complement wrapping）*。简而言之，对于比那种类型能保存的最大值还要大的值，就会被“回卷（wrap around）”到那种类型所能保存的最小值。以 `u8` 为例，值 `256` 就变成了 `0`，值 `257` 就变成了 `1`，如此等等。这样程序就不会死掉，而那个变量则会有着一个或许不是所期望的值。对整数溢出的回卷行为的依赖，被视为一种错误（Relying on integer overflow's wrapping behavior is considered an error）。
+>
+> 要显式地处理可能的溢出，就要用到标准库为原生数字类型所提供的以下方法族（these families of methods provided by the standard library for primitive numeric types）：
+>
+> - 以 `wrapping_*` 这些方法的所有模式的封装，比如 `wrapping_add`（wrap in all modes with the `wrapping_*` methods, such as `wrapping_add`）；
+> - 存在以 `checked_*` 方法的溢出时，返回 `None` 值（return the `None` value if there is overflow with the `checked_*` methods）；
+> - 返回该值，以及一个表示是否存在带有 `overflowing_*` 方法的溢出的布尔值（return the value and a boolean indicating whether there was overflow with the `overflow_*` methods）；
+> - 以 `saturating_*` 方法，实现该值的最小或最大值处饱和（saturate at the value's minimum or maximum values with `saturating_*` methods）。
+
+
+### 浮点类型
+
+
