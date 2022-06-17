@@ -1,20 +1,11 @@
 fn main() {
-    let x = 5;
+    let x = (500, 6.4, 1);
 
-    let x = x + 1;
+    let five_hundred = x.0;
 
-    {
-        let x = x * 2;
-        println! ("内部作用域中 x 的值为：{}", x);
-    }
+    let six_point_four = x.1;
 
-    println! ("x 的值为：{}", x);
-    
-    let spaces: &str = "    ";
-    // let mut spaces = "    ";
-    let spaces: usize = spaces.len();
+    let one = x.2;
 
-    println! ("spaces 为：{}", spaces);
-
-    let guess: i32 = "42".parse().expect("那不是个数字！");
+    println! ("x.0： {}, x.1：{}, x.2：{}", five_hundred, six_point_four, one);
 }

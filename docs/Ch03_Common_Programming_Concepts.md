@@ -269,4 +269,139 @@ error: could not compile `variables` due to previous error
 
 ### 浮点类型
 
+Rust 同样有两种原生的 *浮点数* 类型，所谓浮点数，是带有小数点的数字。Rust 的浮点数类型为 `f32` 与 `f64`，分别为 32 位及 64 位大小。由于在现代 CPU 上 `f64` 与 `f32` 处理速度大致一样，不过前者具备了更高的精度，因此默认类型就定为了 `f64`。两种浮点数类型都是有符号的。
 
+下面的示例展示了具体的浮点数：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let x = 2.0;    // f64
+    let y: f32 = 3.0;   // f32
+}
+
+浮点数的表示，符合 [IEEE-754 标准](https://standards.ieee.org/ieee/754/6210/)。`f32` 类型是单精度浮点数，而 `f64` 则是双精度的。
+
+### 数字运算
+
+Rust 支持在所有数字类型上、所期望的那些基本数学运算：加法、减法、乘法、除法，及余数。整数除法会向下取到最接近的整数结果。下面的代码展示了在 `let` 语句中，如何运用各种数字运算：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    
+    // 加法
+    let sum = 5 + 10;
+
+    // 减法
+    let difference = 95.5 - 4.3;
+
+    // 乘法
+    let product = 4 * 30;
+
+    // 除法
+    let quotient = 56.7 / 32.2;
+    let floored = 2 / 3; // 结果为 0
+
+    // 余数
+    let reminder = 43 % 5;
+
+    println! ("
+        5 + 10 = {}, 
+        95.5 - 4.3 = {}
+        4 * 30 = {}
+        56.7 / 32.2 = {}
+        2 / 3 = {}
+        43 % 5 = {}", sum, difference, product, quotient, floored, reminder);
+}
+```
+
+这些语句中每个表达式都使用了一个数学运算符，并求到一个单值，该单值随后被绑定到变量。[附录 B](Ch99_Operators.md) 包含了 Rust 所提供的全部运算符。
+
+### 布尔值类型
+
+与多数其他编程语言中一样，Rust 中的布尔值类型也有两个可能的值：`true` 及 `false`。布尔值大小为一个字节。Rust 中的布尔值类型，指定使用 `bool` 关键字。比如：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let t = true;
+
+    let f: bool = false; // 带有显式类型注解
+}
+```
+
+主要通过条件判断，来使用布尔值，比如在 `if` 表达式中。在 [控制流（Control Flow）](#control-flow) 小节，会讲到 Rust 中 `if` 表达式的工作方式。
+
+#### 字符类型
+
+Rust 的 `char` 类型，是这门语言最为原生的字母类型。下面就是一些声明 `char` 值的示例：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let c = 'z';
+    let z = 'ℤ';
+    let heart_eyed_cat = '😻';
+
+    println! ("c 为 {}, z 为 {}, 爱心猫: {}", c, z, heart_eyed_cat);
+}
+```
+
+请注意，相比使用双引号来给字符串字面值进行值的指定，这里是以单引号来对这些 `char` 的字面值进行指定的。Rust 的 `char` 类型，有着四个字节的大小，而表示了 Unicode 的标量值，这就意味着他可以表示比仅仅 ASCII 要多得多的符号。像是重音字母（accented letters）；中文、日语、韩语等等；emoji 符号；以及那些零宽度空格等等，在 Rust 中都是有效的 `char` 取值。Unicode 标量值的范围，是从 `U+0000` 到 `U+D7FF`，及 `U+E000` 到 `U+10FFFF`，包含边界值。不过，“字符（character）” 并非 Unicode 中的概念，因此对 “字符” 为何物的主观认识，可能与 Rust 中 `char` 的本质有所差别。在第 8 章中的 [用字符串存储 UTF-8 编码的文本](Ch08_Strings.md#storing-utf-8-encoded-text-with-strings) 小节，将对此话题进行讨论。
+
+## 复合类型
+
+*复合类型（compound types）* 可将多个值组合成一个类型。Rust 有着两个原生的复合类型：元组与数组（tuples and arrays）。
+
+### 元组类型
+
+元组是将数个不同类型的值，组合成一个复合类型的一般方式。元组是固定长度的：一旦被声明出来，他们的大小就无法扩大或缩小了。
+
+通过编写放在圆括号里面的、逗号分隔的值清单，来创建元组。元组中每个位置都有着一种类型，同时元组中不同值的类型不必一致。下面的示例中，加上了那些可选的类型注解：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let tup: (i32, f64, u8) = (500, 6.4, 1);
+}
+```
+
+由于元组被当作是单一复合元素，因此这里的变量 `tup` 绑定到了那整个的元组。要从元组获取到其单个值，就要使用模式匹配，来对元组值进行解构，就像下面这样：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let tup = (500, 6.4, 1, "元组的最后一个元素");
+
+    let (x, y, z, a) = tup;
+
+    println! ("a 的值为：{}", a);
+}
+```
+
+这个程序首先创建了一个元组，并将其绑定到了变量 `tup`。随后以 `let` 关键字，使用了一个模式来取得 `tup`，并将其转换为四个独立变量，分别为 `x`、`y`、`z` 与 `a`。由于该操作将单个的元素，打散为了四个部分，因此称之为 *解构（destructuring）*。最后，程序打印出了 `a` 的值，即为 `元组的最后一个元素`。
+
+还可以通过使用句点（`.`）后带上想要访问值的索引，还可直接对某个元组元素进行访问。比如：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let x = (500, 6.4, 1);
+
+    let five_hundred = x.0;
+
+    let six_point_four = x.1;
+
+    let one = x.2;
+
+    println! ("x.0： {}, x.1：{}, x.2：{}", five_hundred, six_point_four, one);
+}
+```
