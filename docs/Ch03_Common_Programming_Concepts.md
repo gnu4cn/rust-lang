@@ -471,4 +471,92 @@ fn main() {
 
 ### 无效的数组元素访问
 
+下来来看看，在尝试访问超出数组末端的数组元素时，会发生什么。就是说在运行下面这个程序时，与第二章中的猜数游戏类似，要从用户那里获取到一个数组索引：
+
+文件名：`src/main.rs`
+
+```rust
+use std::io;
+use std::process;
+
+fn main() {
+    let a = [1, 2, 3, 4, 5];
+
+    println! ("请输入一个数组索引。");
+
+    let mut index = String::new();
+
+    io::stdin()
+        .read_line(&mut index)
+        .expect("读取行失败");
+
+    let index: usize = match index.trim()
+        .parse() {
+            Ok(num) => num,
+            Err(_) => { 
+                println! ("输入的索引并非数字");
+                process::exit(0);
+            }
+        };
+
+    let element = a[index];
+
+    println! (
+        "位于索引 {} 处的元素值为：{}",
+        index, element);
+}
+```
+
+此代码会成功编译。而在使用 `cargo run` 运行此代码，并输入 `0`、`1`、`2`、`3` 或 `4` 时，程序将打印出该数组中对应与那个索引处的值。而若输入了一个超出数组末端的数字，比如 `10`，那么就会看到下面这样的输出：
+
+```console
+thread 'main' panicked at 'index out of bounds: the len is 5 but the index is 10', src/main.rs:24:19
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+```
+
+当在索引操作中使用了无效值的时间点，该程序造成了一个 *运行时（runtime）* 错误。该程序以一条错误消息退出，而并未执行那最后的 `println!` 语句。在尝试使用索引访问某个元素时，Rust 会就所指定的索引，小于数组长度进行检查。若该索引大于或等于数组长度，Rust 就会出错。此项检查必须要在运行时进行，尤其是在此示例中，这是因为编译器几无可能知道在用户随后运行此程序时，会输入什么样的值。
+
+这是 Rust 内存安全准则的一个活生生的示例。在许多底层语言中，此种检查都未实现，进而在提供了不正确的索引时，就会访问到无效的内存。Rust 通过立即退出而不是允许这种无效内存访问并继续运行，而保护免于此类错误。第 9 章将对 Rust 的错误处理进行过多的讨论。
+
+## 函数
+
+函数遍布于 Rust 代码中。而那个这门语言中最重要函数之一：`main` 函数，也一早就见到过了，`main` 函数可是许多程序的入口点。通过那个还已见到过的 `fn` 关键字，就可以声明出新的函数来。
+
+Rust 代码使用 *蛇形命名法（snake case）*，作为函数与变量命名的约定样式，以这种命名法，函数及变量名称中的全部字母都是小写的，同时用下划线来分隔单词。下面就是一个包含了示例函数定义的程序：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    println!("Hello, world!");
+
+    another_function();
+}
+
+fn another_function() {
+    println! ("另一函数。");
+}
+```
+
+这里通过敲入 `fn` 关键字，接着的是函数名字，以及一套圆括号（`()`），定义出了一个函数。而那一对花括弧（`{}`），则告诉编译器，函数体在哪里开始和结束。
+
+通过敲入函数名字，接上一对圆括号（`()`），就可以对已定义好的函数进行调用。由于 `another_function` 在程序中定义过，因此就可以在 `main` 函数里头对其调用。请注意在源代码中，是在 `main` 函数 *之后* 定义的 `another_function`；原本也可以在 `main` 函数之前定义他。Rust 不会关心在何处定义函数，只要他们在某处有定义即可。
+
+为进一步对 Rust 的函数加以探索，就来创建一个新的名为 `functions` 的二进制可执行项目。将这个 `another_function` 示例放在 `src/main.rs` 中并运行。就会看到如下的输出：
+
+```console
+$ cargo run
+   Compiling functions v0.1.0 (/home/peng/rust-lang/projects/functions)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.32s
+     Running `target/debug/functions`
+Hello, world!
+另一函数。
+``` 
+
+> 注：二进制项目（a binary project），是与库源代码项目相对应的，可生成二进制可执行程序的项目。
+
+这些代码行，是以他们出现在 `main` 函数中的顺序执行的。首先打印出的是 `Hello, world!` 消息，而随后 `another_function` 就被调用了，同时他的消息被打印出来。
+
+### 参数
+
 
