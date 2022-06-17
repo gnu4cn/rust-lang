@@ -1,10 +1,8 @@
 fn main() {
-    let tup = (1, 0.5, "元组元素");
+    let a = [1, 2, 3, 4, 5];
 
-    println! ("tup.1：{}", tup.1);
+    let first = a[0];
+    let last = a[a.len()-1];
 
-    let months: [&str; 12] = ["January", "February", "March", "April", "May", "June", "July",
-                  "August", "September", "October", "November", "December"];
-
-    println! ("七月：{}", months[6]);
+    println! ("数组的第一个元素：{}，最后一个元素：{}", first, last);
 }
