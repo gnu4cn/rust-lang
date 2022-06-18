@@ -1030,6 +1030,96 @@ error: could not compile `branches` due to previous error
 
 `if` 代码块中的表达式，求解为整数，而`else` 代码块中的表达式求解为了字符串。由于变量必须有着单一类型，且 Rust 需要知道在运行时变量 `number` 的类型是什么，那么显然这代码是不会工作的。清楚 `number` 的类型，就允许编译器在所有用到 `number` 的地方，验证其类型的有效性。而如果只有在运行时才确定出 `number` 的类型，那么 Rust 就无法做到这一点；若编译器务必要对全部变量的多个假定类型进行跟踪，那么编译器就会更为复杂，且做到更少代码保证。
 
-### 循环下的重复
+## 循环下的重复
+
+多次执行某个代码块常常是有用的。对于这类任务，Rust 提供了数种 *循环（loops）*，所谓循环，是指会贯通执行循环体里头的代码到结束，并随后立即回到开头开始执行。首先构造一个名为 `loops` 的新项目，来进行这些循环的实验。
+
+Rust 有着三种循环：`loop`、`while` 及 `for`。接下来就要各个进行尝试。
+
+### 用 `loop` 关键字对代码进行重复
+
+`loop` 关键字告诉 Rust 去一直一遍又一遍执行代码块，抑或直到显式地告诉他停下来为止。
+
+作为示例，将 `loops` 目录中的 `src/main.rs` 文件修改为下面这样：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    loop {
+        println! (”再次！“);
+    }
+}
+```
+
+在运行这个程序时，就会看到一遍又一遍地持续打印出 `再次！`，知道手动停止这个程序为止。大多数终端程序，都支持键盘快捷键 `ctrl-c` 来中断某个卡在无尽循环中的某个程序。来尝试一下：
+
+```console
+$ cargo run
+   Compiling loops v0.1.0 (file:///projects/loops)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.29s
+     Running `target/debug/loops`
+再次！
+再次！
+再次！
+再次！
+^C再次！
+```
+
+其中的符号 `^C` 表示按下 `ctrl-c` 的地方。在那个 `^C` 之后，可能会也可能不会看到 `再次！` 被打印出来，取决于程序接收到中断信号时，代码在循环中的何处。
+
+幸运的是，Rust 还提供了一种运用代码来跳出循环的方式。可在循环中放置 `break` 关键字，而告诉程序在何时结束执行这个循环。还记得在第 2 章的 [猜对数字后退出程序](Ch02_Programming_a_Guessing_Game.md#quitting-after-a-correct-guess) 小节，就在那个猜数游戏中这样做了，在通过猜到正确数字而赢得游戏时退出那个程序。
+
+在那个猜数游戏中，还使用了 `continue` 关键字，循环中的 `continue` 关键字，告诉程序去跳过循环本次迭代的其余全部代码，而前往下一次迭代。
+
+在有着循环里头的循环时，那么 `break` 与 `continue` 就会应用在他们所在点位处的最内层循环（if you have loops within loops, `break` and `continue` apply to the innermost loop at that point）。可选择在某个循环上指定一个 *循环标签（loop label）*，这样就可以与 `break` 或 `continue` 结合使用，来指明这些关键字是要应用到打上标签的循环，而不再是那最里层的循环了。下面就是一个有着两个嵌套循环的示例：
+
+```rust
+fn main() {
+    let mut count = 0;
+
+    'counting_up: loop {
+        println! ("计数 = {}", count);
+        let mut remaining = 10;
+
+        loop {
+            println! ("剩余 = {}", remaining);
+            if remaining == 9 {
+                break;
+            }
+            if count == 2 {
+                break 'counting_up;
+            }
+            remaining -= 1;
+        }
+
+        count += 1;
+    }
+
+    println! ("最终计数 = {}", count);
+}
+```
+
+其中的外层循环有着标签 `'counting_up`，同时他将从 `0` 计数到 `2`。而其中的内层循环不带标签，会从 `10` 计数到 `9`。其中的第一个未指定标签的 `break` 语句，将只会退出那个内部循环。而那个 `break 'counting_up;` 语句，则会将外层循环退出。此代码会打印出：
+
+```console
+$ cargo run                                                                           INT ✘ 
+   Compiling loops v0.1.0 (/home/peng/rust-lang/projects/loops)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.18s
+     Running `target/debug/loops`
+计数 = 0
+剩余 = 10
+剩余 = 9
+计数 = 1
+剩余 = 10
+剩余 = 9
+计数 = 2
+剩余 = 10
+最终计数 = 2
+```
+
+### 自循环返回值
+
+**Returning Values from Loops**
 
 

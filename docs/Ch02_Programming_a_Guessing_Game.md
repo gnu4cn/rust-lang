@@ -599,7 +599,7 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 
 敲入 `quit` 就会退出这游戏，不过正如所注意到的，这样做将就要敲入别的非数字输入。至少可以是这种做法是次优的；这里想要在猜到了正确数字时，游戏也要停止。
 
-## 猜对后的退出
+## <a id="quitting-after-a-correct-guess"></a>猜对后的退出
 
 下面就来通过添加一条 `break` 语句，将游戏编程为在用户赢了时退出：
 
