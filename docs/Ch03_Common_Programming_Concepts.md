@@ -880,7 +880,7 @@ $ cargo run                                                            ✔
 再运行这个程序，然后看看输出：
 
 ```console
-$ cargo run                   1 ✘ 
+$ cargo run                                                            1 ✘ 
    Compiling branches v0.1.0 (/home/peng/rust-lang/projects/branches)
     Finished dev [unoptimized + debuginfo] target(s) in 0.45s
      Running `target/debug/branches`
@@ -892,4 +892,47 @@ $ cargo run                   1 ✘
 文件名：`src/main.rs`
 
 ```rust
+fn main() {
+    let number = 3;
+
+    if number {
+        println! ("数字是 3");
+    }
+}
+```
+
+这次的 `if` 条件求解为一个 `3` 的值，进而 Rust 抛出一个错误：
+
+```console
+$ cargo run                     ✔ 
+   Compiling branches v0.1.0 (/home/peng/rust-lang/projects/branches)
+error[E0308]: mismatched types
+ --> src/main.rs:4:8
+  |
+4 |     if number {
+  |        ^^^^^^ expected `bool`, found integer
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `branches` due to previous error
+```
+
+该错误表明 Rust 期望得到一个 `bool` 值但得到的是个整数。与诸如 Ruby 和 JavaScript 那样的语言不同，Rust 不会自动将非布尔值转换为布尔值。必须显式地且一直提供给 `if` 一个布尔值作为其条件。比如希望那个 `if` 代码块，仅在某个数字不等于 `0` 的时候运行，那么就可以将这个 `if` 表达式修改为下面这样：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let number = 3;
+
+    if number != 0 {
+        println! ("数字为非零数");
+    }
+}
+```
+
+运行此代码，就会打印出 `数字为非零数`。
+
+
+### 用 `else if` 来处理多个条件
+
 

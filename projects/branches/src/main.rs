@@ -1,9 +1,7 @@
 fn main() {
-    let number = 7;
+    let number = 3;
 
-    if number < 5 {
-        println! ("条件为真");
-    } else {
-        println! ("条件为假");
+    if number != 0 {
+        println! ("数字是 3");
     }
 }
