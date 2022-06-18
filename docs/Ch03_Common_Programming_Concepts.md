@@ -832,3 +832,43 @@ fn main() {
 ```
 
 Rust 还有另外一种注释，叫做文档注释，在第 14 章的 [将代码箱发布到 Crates.io](Ch14_More_about_Cargo_and_Crates.io.md#publishing-a-crate-tocrates-io) 中会对文档注释进行讨论。
+
+## 控制流程（Control Flow）
+
+根据条件是否为真，来运行某些代码，或者在条件为真时重复运行某些代码的能力，是绝大多数语言的根基。实现Rust代码执行流程控制最常见的结构，即是 `if` 表达式和循环。
+
+### `if` 表达式
+
+`if` 表达式实现了根据条件对代码进行分支。提供到一个条件，然后就表明，“在该条件满足时，运行这个代码块。在条件不满足时，就不要运行这个代码块。”
+
+请在 `projects` 目录下，创建一个新的、名为 `branches` 的项目，来探索这个 `if` 表达式。在 `src/main.rs` 文件中，输入以下代码：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let number = 3;
+
+    if number < 5 {
+        println! ("条件为真");
+    } else {
+        println! ("条件为假");
+    }
+}
+```
+
+全部 `if` 表达式，都是以关键字 `if` 开头的，接着的是一个条件。在此示例中，那个条件就变量 `number` 是否小于 `5` 进行检查。是把要在条件为真时立即执行的代码块，放在条件之后、一对花括号里头。`if`表达式中与那些条件相关联的代码块，有时也叫做 *支臂（arms）*，这与在第 2 章的 [将猜数与秘密数字比较](Ch02_Programming_a_Guessing_Game.md#comparing-the-guess-to-the-secret-number) 小节中讨论过的 `match` 表达式中的支臂一样。
+
+作为可选项，还可以包含一个 `else` 表达式，即这里做的那样，从而给到程序一个替代性的、将在条件求解结果为 `false` 时执行的代码块。在未提供`else`表达式，且条件为 `false` 时，程序将直接跳过那个 `if` 代码块，而前往接下来的代码处。
+
+尝试运行此代码；将看到下面的输出：
+
+```console
+$ cargo run                  ✔ 
+   Compiling branches v0.1.0 (/home/peng/rust-lang/projects/branches)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.48s
+     Running `target/debug/branches`
+条件为真
+```
+
+
