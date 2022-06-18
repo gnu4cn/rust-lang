@@ -864,11 +864,32 @@ fn main() {
 尝试运行此代码；将看到下面的输出：
 
 ```console
-$ cargo run                  ✔ 
+$ cargo run                                                            ✔ 
    Compiling branches v0.1.0 (/home/peng/rust-lang/projects/branches)
     Finished dev [unoptimized + debuginfo] target(s) in 0.48s
      Running `target/debug/branches`
 条件为真
 ```
 
+下面来试着将 `number` 的值修改为一个令到该条件为 `false` 的值，看看会发生什么：
+
+```rust
+    let number = 7;
+```
+
+再运行这个程序，然后看看输出：
+
+```console
+$ cargo run                   1 ✘ 
+   Compiling branches v0.1.0 (/home/peng/rust-lang/projects/branches)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.45s
+     Running `target/debug/branches`
+条件为假
+```
+
+还值得注意的是，此代码中的条件 *必须* 是个 `bool` 类型。在条件不是 `bool` 类型时，就会收到错误。比如，尝试运行下面的代码：
+
+文件名：`src/main.rs`
+
+```rust
 
