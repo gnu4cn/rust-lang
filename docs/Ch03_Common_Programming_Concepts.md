@@ -935,4 +935,38 @@ fn main() {
 
 ### 用 `else if` 来处理多个条件
 
+通过在 `else if` 表达式中，结合 `if` 和 `else`，就可以使用多个条件。比如：
 
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let number = 6;
+
+    if number % 4 == 0 {
+        println! ("数字可被 4 整除");
+    } else if number % 3 == 0 {
+        println! ("数字可被 3 整除");
+    } else if number % 2 == 0 {
+        println! ("数字可被 2 整除");
+    } else {
+        println! ("数字不可被 4、3 或 2 整除");
+    }
+}
+```
+
+此程序有着其可接收的四个可能路径。在运行他时，就会看到下面的输出：
+
+```console
+$ cargo run                                                                           101 ✘ 
+   Compiling branches v0.1.0 (/home/peng/rust-lang/projects/branches)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.45s
+     Running `target/debug/branches`
+数字可被 3 整除
+```
+
+在该程序执行时，就会依次检查各个 `if` 表达式，并执行那第一个条件成立的代码体。请注意即便 `6` 是可被 `2` 整除的，却并未看到输出 `数字可被 2 整除`，也没看到那个 `else` 代码块的 `数字不能被 4、3 或 2 整除` 文字。这是由于 Rust 只执行了第一个为真条件下的代码块，而一旦他发现了一个，就在不会检查剩下的那些条件了。
+
+使用太多的 `else if` 表达式，就会让代码杂乱无章，因此在有多于一个这样的表达式时，或许就应对代码进行重构了。第 6 章描述了针对这样情况的一种强大的 Rust 分支结构，名为`match` 模式匹配。
+
+### 
