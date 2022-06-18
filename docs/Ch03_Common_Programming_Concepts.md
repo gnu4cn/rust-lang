@@ -707,7 +707,7 @@ fn main() {
 
 其中的这个表达式：
 
-```rust
+ ```rust
 {
     let x = 3;
     x + 1
@@ -717,3 +717,81 @@ fn main() {
 在这个示例中，就是一个求值为 `4` 的表达式。其求得的值 `4` 会作为那条 `let` 语句的一部分，被绑定到 `y`。请注意那代码块最后的 `x + 1` 的代码行，并没有分号（`;`），而与到目前为止所见到的大多数代码行不同。表达式并不包含最后的分号。若将分号家到表达式末端，就会将其变成一条语句，进而就不再返回值了。在接下来对函数返回值与表达式的探索过程中，请牢记这一点。
 
 > 注：若在上面代码块中的 `x + 1` 后面加上分号，那么 `y` 的值将为 `()` 这一特殊值（类似于 `null`）。进而在接下来的 `println!` 语句中导致出错。
+
+
+### 有返回值的函数
+
+函数可以将值返回给调用他们的代码。在函数有值要返回时，不会就这些返回值命名，但必须在箭头（`->`）后面，声明这些值的类型。在 Rust 中，函数的返回值，与函数体代码块的最后那个表达式的值，二者等价。通过使用 `return` 关键字并指定一个值，即可尽早地给函数返回值，不过大多数函数，都显式地返回最后的那个表达式。下面就是返回值的一个函数示例：
+
+> 注：关键字 `return` 的使用，标志着函数体的结束，`return` 语句之后的代码，将不再执行。
+
+文件名：`src/main.rs`
+
+```rust
+fn five() -> u32 {
+    5
+}
+
+fn main() {
+    let x = five();
+
+    println! ("x 的值为：{}", x);
+}
+```
+
+在那个 `five` 函数中，没有任何函数调用、宏、或者甚至 `let` 语句 -- 只是那个数字 `5` 自己。在 Rust 中这是个完全有效的函数。请注意该函数的返回值类型，也是以 `-> u32` 的形式指定了的。尝试运行此代码；输出应像下面这样：
+
+```console
+$ cargo run                                                        ✔ 
+   Compiling functions v0.1.0 (/home/peng/rust-lang/projects/functions)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.45s
+     Running `target/debug/functions`
+x 的值为：5
+```
+
+函数 `five` 中的 `5` 即是该函数的返回值，这就是为何返回值类型为 `u32` 的原因。下面来更深入地检视一下。其中有两个重点：首先，代码行`let x = five();` 表明这里使用了某个函数的返回值，来对一个变量进行初始化。由于函数 `five` 返回了一个 `5`，因此那行代码就跟下面的相同：
+
+```rust
+let x = 5;
+```
+
+其次，函数 `five` 没有参数，并定义了返回值类型，而其函数体只是个孤零零的、不带分号的 `5`，这是由于这个不带分号的 `5`，是个要将其值加以返回的表达式（注：若加上分号，那么就会变成一个语句，返回的将是特殊值 `()`，返回值类型将不再是 `u32`，从而导致编译时错误......）。
+
+下面来看看另一个示例：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let x = plus_one(-1);
+
+    println! ("x 的值为：{}", x);
+}
+
+fn plus_one(x: i32) -> i32 {
+    x + 1;
+}
+```
+
+对这段代码进行编译，会产生一条错误，如下所示：
+
+```console
+$ cargo run                                                        ✔ 
+   Compiling functions v0.1.0 (/home/peng/rust-lang/projects/functions)
+error[E0308]: mismatched types
+ --> src/main.rs:7:24
+  |
+7 | fn plus_one(x: i32) -> i32 {
+  |    --------            ^^^ expected `i32`, found `()`
+  |    |
+  |    implicitly returns `()` as its body has no tail or `return` expression
+8 |     x + 1;
+  |          - help: consider removing this semicolon
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `functions` due to previous error
+```
+
+主要错误消息为，“mismatched types，”，该消息表明了此代码的核心问题。函数 `plus_one` 的定义是说他将返回一个 `i32`，然而函数体的语句并未求解到一个值来，求解到的是一个以 `()` 表示的单元类型（the unit type）。因此，就什么也没返回，这是与函数定义相矛盾的，进而导致了一个错误。在此输出中，Rust 提供了一条或许有助于纠正此问题的消息：他建议移除那个分号，那样就会修正该错误。
+
+
