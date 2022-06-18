@@ -794,4 +794,6 @@ error: could not compile `functions` due to previous error
 
 主要错误消息为，“mismatched types，”，该消息表明了此代码的核心问题。函数 `plus_one` 的定义是说他将返回一个 `i32`，然而函数体的语句并未求解到一个值来，求解到的是一个以 `()` 表示的单元类型（the unit type）。因此，就什么也没返回，这是与函数定义相矛盾的，进而导致了一个错误。在此输出中，Rust 提供了一条或许有助于纠正此问题的消息：他建议移除那个分号，那样就会修正该错误。
 
+## 注释
+
 
