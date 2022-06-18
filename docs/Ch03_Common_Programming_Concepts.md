@@ -969,4 +969,67 @@ $ cargo run                                                                     
 
 使用太多的 `else if` 表达式，就会让代码杂乱无章，因此在有多于一个这样的表达式时，或许就应对代码进行重构了。第 6 章描述了针对这样情况的一种强大的 Rust 分支结构，名为`match` 模式匹配。
 
-### 
+### 在 `let` 语句中使用 `if` 关键字
+
+由于 `if` 是个表达式，那么就可以在 `let` 表达式的右边使用他，来将其结算结果，赋值给某个变量，如下面的清单 3-2 所示：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let condition = true;
+
+    let number = if condition { 5 } else { 6 };
+
+    println! ("number 的值为：{}", number);
+}
+```
+
+*清单 3-2：将`if` 表达式的结果赋值给某个变量*
+
+其中的 `number` 变量，就会被绑定到那个 `if` 表达式的计算结果上。运行此代码看看会发生什么：
+
+```console
+$ cargo run                                                                               ✔ 
+   Compiling branches v0.1.0 (/home/peng/rust-lang/projects/branches)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.45s
+     Running `target/debug/branches`
+number 的值为：5
+```
+
+请记住代码块会求解到其中最后一个表达式的值，且数字本身也就是表达式。在此示例中，整个 `if` 表达式的值，是取决于会执行到哪个代码块的。这就意味着那些该 `if` 表达式各个支臂的、具备作为 `if` 表达式运算结果的那些值，必须要是相同类型；在清单 3-2 中，`if` 支臂和 `else` 支臂的运算结果，就都是 `i32` 类型的整数。若这些类型不匹配，就如下面的示例中那样，则会收到错误：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let condition = true;
+
+    let number = if condition { 5 } else { "six" };
+
+    println! ("number 的值为：{}", number);
+}
+```
+
+在尝试编译这段代码时，就会收到错误。其中的 `if` 与 `else` 支臂的值类型不兼容，同时 Rust 还准确标明了在程序中何处发现的该问题：
+
+```console
+$ cargo run                                                                               ✔ 
+   Compiling branches v0.1.0 (/home/peng/rust-lang/projects/branches)
+error[E0308]: `if` and `else` have incompatible types
+ --> src/main.rs:4:44
+  |
+4 |     let number = if condition { 5 } else { "six" };
+  |                                 -          ^^^^^ expected integer, found `&str`
+  |                                 |
+  |                                 expected because of this
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `branches` due to previous error
+```
+
+`if` 代码块中的表达式，求解为整数，而`else` 代码块中的表达式求解为了字符串。由于变量必须有着单一类型，且 Rust 需要知道在运行时变量 `number` 的类型是什么，那么显然这代码是不会工作的。清楚 `number` 的类型，就允许编译器在所有用到 `number` 的地方，验证其类型的有效性。而如果只有在运行时才确定出 `number` 的类型，那么 Rust 就无法做到这一点；若编译器务必要对全部变量的多个假定类型进行跟踪，那么编译器就会更为复杂，且做到更少代码保证。
+
+### 循环下的重复
+
+
