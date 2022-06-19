@@ -1447,7 +1447,7 @@ fn main() {
                 println! ("{} {}.", amounts[tmp], things[tmp]);
             }
             if tmp == 0 && num != 1 {
-                println! ("and {} {}.", amounts[tmp], things[tmp]);
+                println! ("And {} {}.", amounts[tmp].to_lowercase(), things[tmp]);
             }
             if tmp != 0 {
                 println! ("{} {},", amounts[tmp], things[tmp]);
