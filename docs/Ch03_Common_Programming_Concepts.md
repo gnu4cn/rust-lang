@@ -1411,18 +1411,18 @@ fn main() {
         "twelfth"
     ];
     let amounts = [
-        "a", 
-        "two", 
-        "three", 
-        "four", 
-        "five", 
-        "six", 
-        "seven", 
-        "eight", 
-        "nine", 
-        "ten", 
-        "eleven", 
-        "twelve"
+        "A", 
+        "Two", 
+        "Three", 
+        "Four", 
+        "Five", 
+        "Six", 
+        "Seven", 
+        "Eight", 
+        "Nine", 
+        "Ten", 
+        "Eleven", 
+        "Twelve"
     ];
     let things = [
         "partridge in a pear tree", 
