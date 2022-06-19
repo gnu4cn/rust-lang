@@ -1257,8 +1257,10 @@ fn main() {
 
 ## 练习答案
 
+- “法式温度与摄氏温度的转换”
+
 <details>
-    <summary>“法式温度与摄氏温度的转换”</summary>
+    <summary>查看 📖</summary>
 
 ```rust
 use std::io;
@@ -1332,9 +1334,11 @@ fn get_temp_input() -> f32 {
 
 </details>
 
+- "生成第 n 个斐波拉基数"
 
 <details>
-    <summary>"生成第 n 个斐波拉基数"</summary>
+    <summary>查看 📖</summary>
+
 
 ```rust
 use std::io;
@@ -1384,13 +1388,14 @@ fn main() {
             nth_fibonacci(n).to_formatted_string(&Locale::en));
     }
 }
+```
 
 </details>
 
-
+- "打印圣诞颂歌 ’The Twelve Days of Christmas‘ 歌词"
 
 <details>
-    <summary>打印圣诞颂歌 “The Twelve Days of Christmas” 歌词</summary>
+    <summary>查看 📖</summary>
 
 ```rust
 fn main() {
