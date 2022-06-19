@@ -1392,7 +1392,7 @@ fn main() {
 
 
 <details>
-    <summary>"打印圣诞颂歌 ’The Twelve Days of Christmas‘ 歌词"</summary>
+    <summary>"打印圣诞颂歌 ‘The Twelve Days of Christmas’ 歌词"</summary>
 
 ```rust
 fn main() {
