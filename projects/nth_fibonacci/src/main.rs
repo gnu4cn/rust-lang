@@ -40,6 +40,8 @@ fn main() {
             };
         };
 
-        println! ("第 {} 个斐波拉基数为：{}", n, nth_fibonacci(n).to_formatted_string(&Locale::en));
+        println! ("第 {} 个斐波拉基数为：{}", 
+            n, 
+            nth_fibonacci(n).to_formatted_string(&Locale::en));
     }
 }
