@@ -9,3 +9,4 @@
 ## 进阶
 
 * [Ch 03 Common Programming Concepts](docs/Ch03_Common_Programming_Concepts.md)
+* [Ch 04 Understanding Ownership](docs/Ch04_Understanding_Ownership.md)
