@@ -1,4 +1,5 @@
 use std::io;
+use num_format::{Locale, ToFormattedString};
 // use std::process;
 
 fn nth_fibonacci(n: u64) -> u64 {
@@ -39,6 +40,6 @@ fn main() {
             };
         };
 
-        println! ("第 {} 个斐波拉基数为：{}", n, nth_fibonacci(n));
+        println! ("第 {} 个斐波拉基数为：{}", n, nth_fibonacci(n).to_formatted_string(&Locale::en));
     }
 }
