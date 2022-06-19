@@ -2,7 +2,7 @@ use std::io;
 use std::process;
 
 fn fah_to_cels(f: f32) -> f32 {
-    return (f-32.0) / 1.8;
+    return (f - 32.0) / 1.8;
 }
 
 fn cels_to_fah(c: f32) -> f32 {
