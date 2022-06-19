@@ -1257,10 +1257,9 @@ fn main() {
 
 ## 练习答案
 
-- “法式温度与摄氏温度的转换”
 
 <details>
-    <summary>查看 📖</summary>
+    <summary>“法式温度与摄氏温度的转换”</summary>
 
 ```rust
 use std::io;
@@ -1334,10 +1333,9 @@ fn get_temp_input() -> f32 {
 
 </details>
 
-- "生成第 n 个斐波拉基数"
 
 <details>
-    <summary>查看 📖</summary>
+    <summary>"生成第 n 个斐波拉基数"</summary>
 
 
 ```rust
@@ -1392,10 +1390,9 @@ fn main() {
 
 </details>
 
-- "打印圣诞颂歌 ’The Twelve Days of Christmas‘ 歌词"
 
 <details>
-    <summary>查看 📖</summary>
+    <summary>"打印圣诞颂歌 ’The Twelve Days of Christmas‘ 歌词"</summary>
 
 ```rust
 fn main() {
