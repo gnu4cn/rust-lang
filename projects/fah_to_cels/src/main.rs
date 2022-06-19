@@ -36,14 +36,14 @@ fn main() {
             println! ("请输入要转换的摄氏温度：");
             let temp = get_temp_input();
 
-            println! ("摄氏温度： {}，等于法氏温度：{}", temp, cels_to_fah(temp));
+            println! ("摄氏温度： {:.2}°C，约为法氏温度：{:.2}°F", temp, cels_to_fah(temp));
         }
 
         if temp_type.eq("2") {
             println! ("请输入要转换的法氏温度：");
             let temp = get_temp_input();
 
-            println! ("法氏温度：{}，等于摄氏温度：{}", temp, fah_to_cels(temp));
+            println! ("法氏温度：{:.2}°F，约为摄氏温度：{:.2}°C", temp, fah_to_cels(temp));
         }
     }
 }
