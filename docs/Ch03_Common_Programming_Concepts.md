@@ -1332,6 +1332,7 @@ fn get_temp_input() -> f32 {
 
 </details>
 
+
 <details>
     <summary>"生成第 n 个斐波拉基数"</summary>
 
@@ -1378,6 +1379,75 @@ fn main() {
         };
 
         println! ("第 {} 个斐波拉基数为：{}", n, nth_fibonacci(n));
+    }
+}
+```
+
+</details>
+
+
+<details>
+    <summary>打印圣诞颂歌 “The Twelve Days of Christmas” 歌词</summary>
+
+```rust
+fn main() {
+    let days = [
+        "first", 
+        "second", 
+        "third", 
+        "fourth", 
+        "fifth", 
+        "sixth", 
+        "seventh", 
+        "eighth", 
+        "nineth", 
+        "tenth", 
+        "eleventh", 
+        "twelfth"
+    ];
+    let amounts = [
+        "a", 
+        "two", 
+        "three", 
+        "four", 
+        "five", 
+        "six", 
+        "seven", 
+        "eight", 
+        "nine", 
+        "ten", 
+        "eleven", 
+        "twelve"
+    ];
+    let things = [
+        "partridge in a pear tree", 
+        "turtle doves", 
+        "French hens",
+        "calling birds",
+        "golden rings",
+        "geese-a-laying",
+        "swans-a-swimming",
+        "maids-a-milking",
+        "ladies dancing",
+        "lords-a-leaping",
+        "pipers piping",
+        "drummers drumming",
+    ];
+
+    for num in 1..=12 {
+        println! ("\nOn the {} day of Christmas,\nMy true love gave to me:", 
+            days[num-1]);
+        for tmp in (0..num).rev() {
+            if tmp == 0 && num == 1 {
+                println! ("{} {}.", amounts[tmp], things[tmp]);
+            }
+            if tmp == 0 && num != 1 {
+                println! ("and {} {}.", amounts[tmp], things[tmp]);
+            }
+            if tmp != 0 {
+                println! ("{} {},", amounts[tmp], things[tmp]);
+            }
+        }
     }
 }
 ```
