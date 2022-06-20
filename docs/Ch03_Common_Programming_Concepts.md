@@ -183,7 +183,7 @@ error: could not compile `variables` due to previous error
 现在已经完成变量运行机制的探讨，接卸来就要看看这些变量可以有的那些其余数据类型了。
 
 
-## 数据类型
+## <a id="data-types"></a>数据类型
 
 Rust 的所有值，都属于某种确切的 *数据类型（data type）*，数据类型告诉 Rust 所指定的是何种数据，进而 Rust 才知道该怎样使用那个数据。接下来会看看两个数据类型的子集：标量（scalar）类型与复合（compound）类型。
 
