@@ -120,6 +120,28 @@ Rust 采用了不同的路线：一旦某个变量超出了作用域，那么该
 
 其中就存在一个，可将那个 `String` 类型的值所需的内存，退回给内存分配器的天然时间点：即在变量 `s` 超出作用域时。在变量超于作用域时，Rust 就会主动调用一个特殊函数。该函数名为 `drop`，且该函数就是 `String` 类型编写者，可将用于退回内存代码放在这个函数里。在那个结束花括号处，Rust 会自动调用这个 `drop` 函数。
 
-> 注意：在 C++ 中，这种在某个项目生命周期结束时，资源充分配的模式，有时被称为 *资源请求即初始化*（in C++, this pattern of deallocating resources at the end of an item's lifetime is sometimes called *Resource Acquisition Is Initialization, RAII*）。若曾用过 RAII 模式，那么 Rust 中的这个 `drop` 函数就会不那么陌生了。
+> 注意：在 C++ 中，这种在某项目生命周期结束时，资源重分配的模式，有时被称为 *资源请求即初始化*（in C++, this pattern of deallocating resources at the end of an item's lifetime is sometimes called *Resource Acquisition Is Initialization, RAII*）。若曾用过 RAII 模式，那么 Rust 中的这个 `drop` 函数就会不那么陌生了。
+
+这种模式对 Rust 代码编写方式有深远影响。这种模式在此刻可能看起来简单，但在想要多个变量都使用早先布置在内存堆上的数据时，这样较为复杂的情况下，代码行为表现就会无法预期。现在就来对这些情况中的一些，探索一下。
+
+### 变量与数据户操作方式之一：移动
+
+在 Rust 中，多个变量与同一数据之间的互操作，会有多种方式。下面来看看一个在清单 4-2 使用到整数的示例：
+
+```rust
+let x = 5;
+let y = x;
+```
+
+*清单 4-2：将变量 `x` 的整数值，赋值给变量 `y`*
+
+这里或许能猜到这段代码正在完成的事情：“把值 `5` 绑定到变量 `x`；然后构造一份 `x` 中值的拷贝并将其绑定到变量 `y`。” 现在就有了两个变量，`x` 与 `y`，且他们都等于 `5`。由于整数是有着已知的、固定大小的简单值，因此这实际上就是正在发生的事情，且这两个 `5` 的值都是被压入到栈上的。
+
+那么现在来看看 `String` 的版本：
+
+```rust
+let s1 = String::from("hello");
+let s2 = s1;
+```
 
 
