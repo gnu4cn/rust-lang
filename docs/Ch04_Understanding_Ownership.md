@@ -168,4 +168,50 @@ let s2 = s1;
 
 早先曾讲过，在变量超出作用域后，Rust 会自动调用那个 `drop` 函数，而清理掉那个变量的堆内存。但图 4-2 则给出了两个指针都指向同一位置的情况。这就是个问题了：在 `s2` 与 `s1` 都超出作用域时，他们都将尝试去释放那同样的内存。这被称为 *双重释放（double free）* 错误，是先前提到过的内存安全错误之一。二次释放内存，可导致内存内存损坏，而内存损坏则会潜在导致安全漏洞。
 
-为确保内存安全，Rust 在代码行 `s2 = s1` 之后，便不再认为 `s1` 是有效的了。因此，在 `s1` 超出作用域后，Rust 便不需要释放任何内存。
+为确保内存安全，Rust 在代码行 `s2 = s1` 之后，便不再认为 `s1` 是有效的了。因此，在 `s1` 超出作用域后，Rust 便不需要释放任何内存。下面就来检查一下，在 `s2` 创建出来后，去尝试使用 `s1` 会发生什么；这样做是不会工作的：
+
+```rust
+    let s1 = String::from("hello");  // 这里 s 的类型为：String
+    let s2 = s1;
+
+    println! ("{}", s1);
+```
+
+由于 Rust 阻止了对失效引用变量的使用，因此将收到一个下面这样的错误：
+
+```console
+$ cargo run                                                                           
+   Compiling string_demo v0.1.0 (/home/peng/rust-lang/projects/string_demo)
+warning: unused variable: `s2`
+ --> src/main.rs:3:9
+  |
+3 |     let s2 = s1;
+  |         ^^ help: if this is intentional, prefix it with an underscore: `_s2`
+  |
+  = note: `#[warn(unused_variables)]` on by default
+
+error[E0382]: borrow of moved value: `s1`
+ --> src/main.rs:5:21
+  |
+2 |     let s1 = String::from("hello");  // 这里 s 的类型为：String
+  |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
+3 |     let s2 = s1;
+  |              -- value moved here
+4 | 
+5 |     println! ("{}", s1);
+  |                     ^^ value borrowed here after move
+  |
+  = note: this error originates in the macro `$crate::format_args_nl` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+For more information about this error, try `rustc --explain E0382`.
+warning: `string_demo` (bin "string_demo") generated 1 warning
+error: could not compile `string_demo` due to previous error; 1 warning emitted
+```
+
+若在使用其他编程语言时，曾听说过 *浅拷贝（shallow copy）* 和 *深拷贝（deep copy）* 这两个说法，那么这种对指针、长度与容量的拷贝，而未拷贝数据的概念，或许听起来像是进行了一次浅拷贝。但由于 Rust 还将第一个变量进行了失效处理，因此这里就不叫浅拷贝，而叫做 *迁移（move）*。在这个示例中，就会讲，变量 `s1` 已被 *迁移* 到变量 `s2` 里了。因此真实发生的事情，就是下图 4-4 显示的那样：
+
+![在变量 `s1` 失效后内存中的表示](images/Ch04_04.svg)
+
+*图 4-4：在变量 `s1` 失效后内存中的表示*
+
+
