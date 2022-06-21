@@ -1,5 +1,7 @@
 # Rust 编程语言
 
+* [Readme](README.md)
+
 ## 入门
 
 * [Ch 00 Forword And Introduction](docs/Ch00_Forword_and_Introduction.md)
