@@ -1,5 +1,5 @@
 [package]
-name = "string_demo"
+name = "ownership_demo"
 version = "0.1.0"
 edition = "2021"
 
