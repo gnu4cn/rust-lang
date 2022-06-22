@@ -252,4 +252,22 @@ println! ("x = {}, y = {}", x, y);
 
 原因就在于，诸如整数这样的，在编译时大小已知的类型，都是被整个存储在栈上，那么构造他们具体值的拷贝是迅速的。那就意味着，在构造出变量 `y` 之后，就没有理由要去阻止变量 `x` 一直有效了。换句话说，此时的深拷贝与浅拷贝之间，是没有区别的，因此对 `clone` 进行调用，不会完成与通常的浅拷贝有任何区别的事情，进而就能忽略这个 `clone` 方法。
 
+Rust 有个叫做 `Copy` 特质（在第 10 章将对特质，traits，进行更多的讲解）的，可放在那些存储于栈上、像是整数这样类型之上的特殊注解。在某个类型实现了 `Copy` 特质时，此类型的变量，就会在赋值给另一变量之后，仍然有效。在某个类型，或这个类型的任何部分曾实现了 `Drop` 特质，那么 Rust 就不会允许再用 `Copy` 特质，对此类型加以注解了。若某个类型需要在其值超出作用域后，还要进行某些特殊处理，且又将 `Copy` 注解添加到那个类型，那么就会收到编译时错误（if the type needs something special to happen when the value goes out of scope and we add the `Copy` annotation to that type, we'll get a compile-time error）。要了解如何将 `Copy` 注解，添加到自己编写的类型而实现这个 `Copy` 特质，请参阅附录 C 中 [可派生特质（derivale traits）](Ch21_Appendix.md#derivable-traits)。
 
+那么到底哪些类型要实现 `Copy` 特质呢？可查阅给定类型的文档，来确定相应类型是否有实现 `Copy` 特质，不过作为一般规则，任何组别的简单标量值，都可对 `Copy` 特质加以实现，已经不要求分配内存或其他形式资源的类型，也都可以实现 `Copy` 特质（any group of simple scalar values can implement `Copy`, and nothing that requires allocation or is some form of resource can implement `Copy`）。下面就是一些实现 `Copy` 特质的类型：
+
+- 全部的整型，比如 `u32`；
+- 布尔值类型，`bool`，即值 `true` 与 `false`；
+- 全部浮点数类型，比如 `f64`;
+- 字符类型，`char`;
+- 仅包含了实现 `Copy` 特质的那些类型的元组类型。比如 `(i32, i32)` 这个元组类型，就实现了 `Copy` 特质，而 `(i32, String)` 则没有。
+
+
+### 所有权与函数
+
+将值传递给函数的语法，与将值赋值给变量的语法，是类似的。将变量传递给函数，就会进行移动或拷贝，这与赋值所做的别无二致。下面的清单 4-3 有着一个带有一些注解的示例，对其中的变量进入和超出作用域，进行了展示。
+
+文件名：`src/main.rs`
+
+
+```rust
