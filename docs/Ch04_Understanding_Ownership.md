@@ -124,7 +124,7 @@ Rust 采用了不同的路线：一旦某个变量超出了作用域，那么该
 
 这种模式对 Rust 代码编写方式有深远影响。这种模式在此刻可能看起来简单，但在想要多个变量都使用早先布置在内存堆上的数据时，这样较为复杂的情况下，代码行为表现就会无法预期。现在就来对这些情况中的一些，探索一下。
 
-### 变量与数据户操作方式之一：移动
+### 变量与数据户操作方式之一：迁移
 
 在 Rust 中，多个变量与同一数据之间的互操作，会有多种方式。下面来看看一个在清单 4-2 使用到整数的示例：
 
@@ -252,9 +252,9 @@ println! ("x = {}, y = {}", x, y);
 
 原因就在于，诸如整数这样的，在编译时大小已知的类型，都是被整个存储在栈上，那么构造他们具体值的拷贝是迅速的。那就意味着，在构造出变量 `y` 之后，就没有理由要去阻止变量 `x` 一直有效了。换句话说，此时的深拷贝与浅拷贝之间，是没有区别的，因此对 `clone` 进行调用，不会完成与通常的浅拷贝有任何区别的事情，进而就能忽略这个 `clone` 方法。
 
-Rust 有个叫做 `Copy` 特质（在第 10 章将对特质，traits，进行更多的讲解）的，可放在那些存储于栈上、像是整数这样类型之上的特殊注解。在某个类型实现了 `Copy` 特质时，此类型的变量，就会在赋值给另一变量之后，仍然有效。在某个类型，或这个类型的任何部分曾实现了 `Drop` 特质，那么 Rust 就不会允许再用 `Copy` 特质，对此类型加以注解了。若某个类型需要在其值超出作用域后，还要进行某些特殊处理，且又将 `Copy` 注解添加到那个类型，那么就会收到编译时错误（if the type needs something special to happen when the value goes out of scope and we add the `Copy` annotation to that type, we'll get a compile-time error）。要了解如何将 `Copy` 注解，添加到自己编写的类型而实现这个 `Copy` 特质，请参阅附录 C 中 [可派生特质（derivale traits）](Ch21_Appendix.md#derivable-traits)。
+Rust 有个叫做 `Copy` 特质（在第 10 章将对特质，traits，进行更多的讲解）的，可放在那些存储于栈上、像是整数这样类型之上的特殊注解。在某个类型实现了 `Copy` 特质时，此类型的变量，就会在赋值给另一变量之后，仍然有效。在某个类型，或这个类型的任何部分曾实现了 `Drop` 特质，那么 Rust 就不会允许再用 `Copy` 特质，对此类型加以注解了。若某个类型需要在其值超出作用域后，还要进行某些特殊处理，且又将 `Copy` 注解添加到那个类型，那么就会收到编译时错误（if the type needs something special to happen when the value goes out of scope and we add the `Copy` annotation to that type, we'll get a compile-time error）。要了解如何将 `Copy` 注解，添加到自己编写的类型而实现这个 `Copy` 特质，请参阅附录 C 中 [可派生特质（derivable traits）](Ch21_Appendix.md#derivable-traits)。
 
-那么到底哪些类型要实现 `Copy` 特质呢？可查阅给定类型的文档，来确定相应类型是否有实现 `Copy` 特质，不过作为一般规则，任何组别的简单标量值，都可对 `Copy` 特质加以实现，已经不要求分配内存或其他形式资源的类型，也都可以实现 `Copy` 特质（any group of simple scalar values can implement `Copy`, and nothing that requires allocation or is some form of resource can implement `Copy`）。下面就是一些实现 `Copy` 特质的类型：
+那么到底哪些类型要实现 `Copy` 特质呢？可查阅给定类型的文档，来确定相应类型是否有实现 `Copy` 特质，不过作为一般规则，任何组别的简单标量值，都可对 `Copy` 特质加以实现，以及不要求分配内存或其他形式资源的类型，也都可以实现 `Copy` 特质（any group of simple scalar values can implement `Copy`, and nothing that requires allocation or is some form of resource can implement `Copy`）。下面就是一些实现 `Copy` 特质的类型：
 
 - 全部的整型，比如 `u32`；
 - 布尔值类型，`bool`，即值 `true` 与 `false`；
@@ -265,7 +265,7 @@ Rust 有个叫做 `Copy` 特质（在第 10 章将对特质，traits，进行更
 
 ### 所有权与函数
 
-将值传递给函数的语法，与将值赋值给变量的语法，是类似的。将变量传递给函数，就会进行移动或拷贝，这与赋值所做的别无二致。下面的清单 4-3 有着一个带有一些注解的示例，对其中的变量进入和超出作用域，进行了展示。
+将值传递给函数的语法，与将值赋值给变量的语法，是类似的。将变量传递给函数，就会进行迁移或拷贝，这与赋值所做的别无二致。下面的清单 4-3 有着一个带有一些注解的示例，对其中的变量进入和超出作用域，进行了展示。
 
 文件名：`src/main.rs`
 
@@ -282,7 +282,7 @@ fn main() {
     makes_copy(x);                  // 变量 x 移入到这个函数，
                                     // 但由于 i32 实现 `Copy` 特质，因此
                                     // 后面在使用变量 x 也是没问题的
-}   // 到这里，变量 x 超出了作用域，接着便是变量 s。但由于变量 s 的值已被移动，因此
+}   // 到这里，变量 x 超出了作用域，接着便是变量 s。但由于变量 s 的值已被迁移，因此
     // 这里不会有特别的事情发生。
 
 fn takes_ownership(some_string: String) {   // 变量 some_string 进到作用域
@@ -311,4 +311,29 @@ fn takes_ownership(some_string: String) {
 
 ### 返回值与作用域（return value and scope）
 
+返回值也会转移所有权。下面的清单 4-4 给出了一个返回了某个值的函数的示例，该示例有着与清单 4-3 中的那些类似的注解。
 
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let s1 = gives_ownership();         // gives_ownership 将其返回值
+                                        // 迁移到变量 s1 中
+
+    let s2 = String::from("hello");     // 变量 s2 进入作用域
+
+    let s3 = takes_and_gives_bake(s2);  // 变量 s2 被迁移到 takes_and_gives_back
+                                        // 中，该函数又将他的返回值迁移到变量 s3 中
+
+    println! ("{}, {}", s1, s3);
+}   // 到这里，变量 s3 超出作用域并不丢弃。变量 s2 已被迁移，因此什么也不会发生。而
+    // 变量 s1 则超出作用域而被丢弃。
+
+fn gives_ownership() -> String {
+    String::from("归你了")
+}
+
+fn takes_and_gives_bake(a_string: String) -> String {
+    a_string
+}
+```
