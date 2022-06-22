@@ -306,3 +306,9 @@ fn takes_ownership(some_string: String) {
     third_takes_ownership(some_string);
 }
 ```
+
+在对 `takes_ownership` 的调用之后，尝试使用变量 `s` 时，Rust 就会抛出一个编译时错误。这样的静态检查，保护免于出错。请将使用变量 `s` 与变量 `x` 的代码添加到 `main` 函数中，来观察一下在哪些地方可以使用他们，以及所有权规则会怎样防止这样做。
+
+### 返回值与作用域（return value and scope）
+
+
