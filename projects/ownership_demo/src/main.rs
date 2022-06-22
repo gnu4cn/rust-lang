@@ -1,6 +1,27 @@
 fn main() {
-    let x = 5;
-    let y = x;
+    let s = String::from("hello");
+    
+    takes_ownership(s);
 
-    println! ("x = {}, y = {}", x, y);
+    let x = 5;
+
+    makes_copy(x);
+}
+
+fn takes_ownership(some_string: String) {
+    println! ("{}", some_string);
+    another_takes_ownership(some_string);
+    third_takes_ownership(some_string);
+}
+
+fn makes_copy(some_integer: i32) {
+    println! ("{}", some_integer);
+}
+
+fn another_takes_ownership(some_string: String) {
+    println! ("{}", some_string);
+}
+
+fn third_takes_ownership(some_string: String) {
+    println! ("{}", some_string);
 }

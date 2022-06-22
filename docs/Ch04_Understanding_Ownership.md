@@ -271,3 +271,38 @@ Rust 有个叫做 `Copy` 特质（在第 10 章将对特质，traits，进行更
 
 
 ```rust
+fn main() {
+    let s = String::from("hello");  // 变量 s 进到作用域
+    
+    takes_ownership(s);             // 变量 s 的值移入到这个函数......
+                                    // ......进而变量 s 因此不再有效
+
+    let x = 5;                      // 变量 x 进到作用域
+
+    makes_copy(x);                  // 变量 x 移入到这个函数，
+                                    // 但由于 i32 实现 `Copy` 特质，因此
+                                    // 后面在使用变量 x 也是没问题的
+}   // 到这里，变量 x 超出了作用域，接着便是变量 s。但由于变量 s 的值已被移动，因此
+    // 这里不会有特别的事情发生。
+
+fn takes_ownership(some_string: String) {   // 变量 some_string 进到作用域
+    println! ("{}", some_string);
+}   // 到这里，变量 some_string 便超出作用域，同时 `drop` 方法被调用。支持
+    // 变量 some_string 的内存被释放。
+
+fn makes_copy(some_integer: i32) {  // 变量 some_integer 进到作用域
+    println! ("{}", some_integer);
+}   // 到这里，变量 some_integer 超出作用域。没有特别事情发生。
+```
+
+*清单 4-3：带所有权与作用域注解的函数*
+
+> 注：下面的代码，仍然会报出：`use of moved value: ``some_string```错误：
+
+```rust
+fn takes_ownership(some_string: String) {
+    println! ("{}", some_string);
+    another_takes_ownership(some_string);
+    third_takes_ownership(some_string);
+}
+```
