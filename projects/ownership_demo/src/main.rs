@@ -1,13 +1,11 @@
 fn main() {
     let s1 = String::from("hello");
 
-    let (s2, len): (String, usize) = calculate_length(s1);
+    let length = calculate_length(&s1);
 
-    println! ("字符串 {} 的长度为：{}", s2, len);
+    println! ("字符串 {} 的长度为：{}", s1, length);
 }
 
-fn calculate_length(s: String) -> (String, usize) {
-    let length = s.len();
-
-    (s, length)
+fn calculate_length(s: &String) -> usize {
+    s.len()
 }

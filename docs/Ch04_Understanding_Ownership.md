@@ -373,4 +373,28 @@ fn calculate_length(s: String) -> (String, usize) {
 
 ## 引用与借用（references and borrowing）
 
-清单 4-5 中那个元组的问题，就是因为那个 `String` 值已被迁移到 `calculate_length` 函数中，因此那里必须将那个 `String` 值返回给调用函数（the calling funciton, 即清单 4-5 中的 `main` 函数），进而在对 `calculate_length` 的调用之后，仍然可以使用那个 `String` 的堆上数据。
+清单 4-5 中那个元组的问题，就是因为那个 `String` 值已被迁移到 `calculate_length` 函数中，因此那里必须将那个 `String` 值返回给调用函数（the calling funciton, 即清单 4-5 中的 `main` 函数），进而在对 `calculate_length` 的调用之后，仍然可以使用那个 `String` 的堆上数据。然而，这里可提供到那个 `String` 值的引用。所谓 *引用*，与指针相像，在引用中的是个地址，循着该地址，就可以访问到保存在那个地址处的、为其他变量所拥有的数据了。与指针不同的是，在指向到某个特定类型的有效值上，引用是有保证的。下面就是应如何定义和使用，有着到某个对象的应用作为参数，而非占用值的所有权的方式下的 `calculate_length` 函数：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let s1 = String::from("hello");
+
+    let length = calculate_length(&s1);
+
+    println! ("字符串 {} 的长度为：{}", s1, length);
+}
+
+fn calculate_length(s: &String) -> usize {
+    s.len()
+}
+```
+
+首先，注意到变量声明与函数返回值中的全部元组代码都不见了。其次，留意到这里是将 `&s1` 传入到 `calculate_length` 中的，同时在该函数的定义中，采用的是 `&String` 而非 `String`。这些 `&` 符号表示的是 *引用（references）*，而正是这些引用实现了无需占用某个值的所有权的情况下，对该值的引用。下图 4-5 对此概念进行了描述。
+
+![指向 `String s1` 的 `&String s` 图示](images/Ch04_05.svg)
+
+*图 4-5：指向 `String s1` 的 `&String s` 图示*
+
+
