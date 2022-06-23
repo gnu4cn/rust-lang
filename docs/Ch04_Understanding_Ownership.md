@@ -329,11 +329,17 @@ fn main() {
 }   // 到这里，变量 s3 超出作用域并不丢弃。变量 s2 已被迁移，因此什么也不会发生。而
     // 变量 s1 则超出作用域而被丢弃。
 
-fn gives_ownership() -> String {
-    String::from("归你了")
+fn gives_ownership() -> String {    // 函数 gives_ownership 将把他的返回值，迁移
+                                    // 到调用他的函数中（？不是调用他的变量吗）
+    String::from("归你了")          // 此表达式的值将被返回，并迁出到调用函数
 }
 
-fn takes_and_gives_bake(a_string: String) -> String {
-    a_string
+// 此函数接收一个 String 并要返回一个 String
+fn takes_and_gives_bake(a_string: String) -> String {   // a_string 进入作用域
+    a_string    // a_string 被返回，并迁出到调用函数
 }
 ```
+
+*清单 4-4：返回值的所有权转移*
+
+
