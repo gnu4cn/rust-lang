@@ -477,3 +477,42 @@ fn change(some_string: &mut String) {
     some_string.push_str(", world!");
 }
 ```
+
+首先，这里将变量 `s` 改为了 `mut`。随后在调用 `change` 函数时，以 `&mut s` 创建了一个可变的引用变量，并以 `some_string: &mut String`，将那个函数签名，更新为接受一个可变引用变量（a mutable reference）。这样做就很清楚地表明，那个 `change` 函数将修改他借用的那个值了。
+
+可变引用变量有个大大的限制：同一时间到某个特定数据，只能有唯一一个可变引用变量。下面尝试创建到变量 `s` 的两个可变引用变量的代码，就会失败：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let mut s = String::from("hello");
+
+    let r1 = &mut s;
+    let r2 = &mut s;
+
+    println! ("{}, {}", r1, r2);
+}
+```
+
+下面是编译器报错：
+
+```console
+$ cargo run
+   Compiling ownership_demo v0.1.0 (/home/peng/rust-lang/projects/ownership_demo)
+error[E0499]: cannot borrow `s` as mutable more than once at a time
+ --> src/main.rs:5:14
+  |
+4 |     let r1 = &mut s;
+  |              ------ first mutable borrow occurs here
+5 |     let r2 = &mut s;
+  |              ^^^^^^ second mutable borrow occurs here
+6 |
+7 |     println! ("{}, {}", r1, r2);
+  |                         -- first borrow later used here
+
+For more information about this error, try `rustc --explain E0499`.
+error: could not compile `ownership_demo` due to previous error
+```
+
+
