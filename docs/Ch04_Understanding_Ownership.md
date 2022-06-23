@@ -523,4 +523,6 @@ error: could not compile `ownership_demo` due to previous error
 - 这些指针中至少有一个正被用于写那个数据（at least one of the pointers is being used to write to the data）；
 - 未有正使用的机制来令到对数据的访问同步化（there's no mechanism being used to synchronize access to the data）。
 
+数据竞争导致未定义行为，进而在运行时尝试对数据竞争加以追踪时，就会难于排查诊断和修复；Rust 通过拒绝编译带有数据竞争的代码，而防止了这类问题！
+
 
