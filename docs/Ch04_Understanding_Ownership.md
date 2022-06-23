@@ -517,4 +517,10 @@ error: could not compile `ownership_demo` due to previous error
 
 此错误是说，由于不能在同一时间，多次借用作为可变变量的 `s`，因此这段代码是无效的。首次可变借用是在 `r1` 中，而这次借用必须持续到其在那个 `println!` 中被使用，但就在那个可变引用变量的创建与其使用中间，这里还尝试了在 `r2` 中创建另一个借用了与 `r1` 同样数据的可变引用变量。
 
+这个阻止了在同一时间对同一数据的多重可变引用的限制，是允许对引用数据进行修改的，不过对引用数据的修改，是在极度受控的方式下进行的（the restriction preventing multiple mutable references to the same data at the same time allows for mutation but in a very controlled fashion）。由于多数语言都允许随时修改数据，而因此多重可变引用正是一些新晋 Rust 公民们纠结不已的东西。有着这个限制的好处，则是 Rust 可以编译时的数据竞争。*数据竞争（data race）* 与竞争情形类似，而在下面三个表现发生出现时，就会发生数据竞争：
+
+- 两个以上的指针在同一时间访问同一数据（two or more pointers access the same data at the same time）；
+- 这些指针中至少有一个正被用于写那个数据（at least one of the pointers is being used to write to the data）；
+- 未有正使用的机制来令到对数据的访问同步化（there's no mechanism being used to synchronize access to the data）。
+
 
