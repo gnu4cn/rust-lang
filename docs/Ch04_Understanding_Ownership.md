@@ -400,4 +400,80 @@ fn calculate_length(s: &String) -> usize {
 
 > 注意：通过使用 `&` 的引用的反面，即为 *解引用（dereferencing）*，解引用是以解引用运算符，`*`，完成的。在第 8 章中就会看到这个解引用运算符的使用，而在第 15 章中，则会对解引用的细节加以讨论。
 
+来细看一下这里的函数调用：
 
+```rust
+let s1 = String::from("hello");
+let len = calculate_length(&s1);
+```
+
+`&s1` 这样的语法，实现了创建一个指向到 `s1` 的值而不占有那个值的引用变量。由于引用不占用那个值，因此在引用变量停止使用时，引用变量指向的值就不会被丢弃。
+
+与此类似，那个函数的签名同样使用 `&` 运算符来表明参数 `s` 的类型是个引用变量。下面就来添加一些说明性的注解：
+
+```rust
+fn calculate_length(s: &String) -> usize {  // 变量 s 为到某个 String 值的引用
+    s.len()
+}   // 到这里，变量 s 超出作用域。但由于他并没有他指向值的所有权，因此什么
+    // 也不会发生。
+```
+
+变量 `s` 有效的作用域，与所有函数参数的作用域是相同的，而由于变量 `s` 不拥有经引用而指向的那个值的所有权，因此在变量 `s` 停止被使用时，那个所指向的值就不会被丢弃。在函数以引用变量，而非真实值作为参数时，由于整个就没有过所有权，那么就不再需要为了交回所有权而将那些值返回了。
+
+那么在尝试修改某个正借用的物件时，又会发生什么呢？请尝试下面清单 4-6 中的代码。提前剧透一下：那代码就不会工作！
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let s = String::from("hello");
+
+    change(&s);
+}
+
+fn change(some_string: &String) {
+    some_string.push_str(", world!");
+}
+```
+
+*清单 4-6：尝试修改借用值*
+
+下面就是编译器报错：
+
+```console
+$ cargo run
+   Compiling ownership_demo v0.1.0 (/home/peng/rust-lang/projects/ownership_demo)
+error[E0596]: cannot borrow `*some_string` as mutable, as it is behind a `&` reference
+ --> src/main.rs:8:5
+  |
+7 | fn change(some_string: &String) {
+  |                        ------- help: consider changing this to be a mutable reference: `&mut String`
+8 |     some_string.push_str(", world!");
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `some_string` is a `&` reference, so the data it refers to cannot be borrowed as mutable
+
+For more information about this error, try `rustc --explain E0596`.
+error: could not compile `ownership_demo` due to previous error
+```
+
+就跟那些默认为不可变的变量一样，引用变量也是这样的。是不允许去修改所引用的某个物件的。
+
+
+### 可变的引用变量
+
+以少量小的、使用 *可变引用变量（mutable reference）* 来取代使用引用变量，的调整，就可将清单 4-6 的代码修改为允许对借用值加以修改了：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let mut s = String::from("hello");
+
+    change(&mut s);
+
+    println! ("s：{}", s);
+}
+
+fn change(some_string: &mut String) {
+    some_string.push_str(", world!");
+}
+```
