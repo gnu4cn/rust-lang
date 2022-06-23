@@ -515,4 +515,4 @@ For more information about this error, try `rustc --explain E0499`.
 error: could not compile `ownership_demo` due to previous error
 ```
 
-
+此错误是说，由于不能多余一次将变量 `s` 以可变引用而在同一时间借用超过一次，因此这段代码是无效的。首次可变借用是在 `r1` 中，而这次借用必须持续要其在那个 `println!` 中被使用到，但就在
