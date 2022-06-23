@@ -525,4 +525,15 @@ error: could not compile `ownership_demo` due to previous error
 
 数据竞争导致未定义行为，进而在运行时尝试对数据竞争加以追踪时，就会难于排查诊断和修复；Rust 通过拒绝编译带有数据竞争的代码，而防止了这类问题！
 
+与往常一样，可使用花括号来创建一个新的作用域，而实现多个可变应用变量，只要不是 *同时（simultaneous）* 的几个就行：
 
+```rust
+    let mut s = String::from("hello");
+
+    {
+        let r1 = &mut s;
+    }   // 由于在这里变量 r1 超出了作用域，因此就可以
+        // 毫无问题地构造一个新的引用变量了。
+
+    let r2 = &mut s;
+```
