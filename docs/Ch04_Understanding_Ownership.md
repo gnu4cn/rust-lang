@@ -342,4 +342,35 @@ fn takes_and_gives_bake(a_string: String) -> String {   // a_string 进入作用
 
 *清单 4-4：返回值的所有权转移*
 
+变量的所有权每次都会依循同一模式：在将值赋值给另一变量时，所有权就得以迁移。在包含内存堆上数据的变量超出作用域时，除非数据所有权已被迁移到另一变量，否则超出作用域变量的值就会被 `drop` 给清理掉。
 
+而在这个模式生效时，每个函数下的取得所有权与随后的交回所有权，就有点乏味了。在要某个函数使用某个值而不占据其所有权时，会怎样呢？如果希望再度使用传入到函数中的全部东西，而还要把这些传入的东西，和那些可能还要返回的函数体运算结果一起再传回来，那样就很烦人了。
+
+如下面的清单 4-5 所示，Rust 确实允许使用一个元组，返回多个值：
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let s1 = String::from("hello");
+
+    let (s2, len): (String, usize) = calculate_length(s1);
+
+    println! ("字符串 {} 的长度为：{}", s2, len);
+}
+
+fn calculate_length(s: String) -> (String, usize) {
+    let length = s.len();
+
+    (s, length)
+}
+```
+
+*清单 4-5：参数的所有权返回*
+
+这虽然间接实现了函数使用变量而去占据变量所有权，但对于所有权这个应成为喜闻乐见的概念来说，这样做就过于形式化，且带来了大量工作负担。幸运的是，Rust 有着一项使用某个值而不转移所有权的特性，叫做 *引用（references）*。
+
+
+## 引用与借用（references and borrowing）
+
+清单 4-5 中那个元组的问题，就是因为那个 `String` 值已被迁移到 `calculate_length` 函数中，因此那里必须将那个 `String` 值返回给调用函数（the calling funciton, 即清单 4-5 中的 `main` 函数），进而在对 `calculate_length` 的调用之后，仍然可以使用那个 `String` 的堆上数据。

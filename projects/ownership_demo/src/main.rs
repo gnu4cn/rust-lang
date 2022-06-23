@@ -1,17 +1,13 @@
 fn main() {
-    let s1 = gives_ownership();
+    let s1 = String::from("hello");
 
-    let s2 = String::from("hello");
+    let (s2, len): (String, usize) = calculate_length(s1);
 
-    let s3 = takes_and_gives_bake(s2);
-
-    println! ("{}, {}", s1, s3);
+    println! ("字符串 {} 的长度为：{}", s2, len);
 }
 
-fn gives_ownership() -> String {
-    String::from("归你了")
-}
+fn calculate_length(s: String) -> (String, usize) {
+    let length = s.len();
 
-fn takes_and_gives_bake(a_string: String) -> String {
-    a_string
+    (s, length)
 }
