@@ -708,4 +708,18 @@ fn first_word(s: &String) -> usize {
 
 *清单 4-7：返回那个 `&String` 参数中一个字节索引值的 `first_word` 函数*
 
+因为这里需要对这个 `String` 值元素挨个遍历，进而挨个检查值是否是个空格，因此这里就将使用 `as_bytes` 方法，把这个 `String` 值转换为字节的数组：
 
+```rust
+let bytes = s.as_bytes();
+```
+
+接着，这里使用 `iter` 方法，创建了一个在该字节数组上的迭代器：
+
+```rust
+for (i, &item) in bytes.iter().enumerate() {
+```
+
+在第 13 章，将讨论到迭代器的更多细节。而现在，明白 `iter` 是个返回集合中各个元素的方法，而那个 `enumerate` 则会将 `iter` 的结果进行封装进而将各个元素作为一个元组的组成部分，进行返回即可。自 `enumerate` 返回的元组第一个元素就是索引值，而第二个元素，则是到 `iter` 返回元素的索引。相比由代码编写者自己计算索引，这就要方便一点。
+
+由于 `enumerate` 方法
