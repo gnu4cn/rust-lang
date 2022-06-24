@@ -634,3 +634,5 @@ help: consider using the `'static` lifetime
 For more information about this error, try `rustc --explain E0106`.
 error: could not compile `ownership_demo` due to previous error
 ```
+
+此错误消息提到了一个这里还没有讲到特性：声明周期（lifetimes）。在第 10 章将详细讨论生命周期。
