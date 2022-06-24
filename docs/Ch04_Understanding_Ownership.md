@@ -572,4 +572,18 @@ For more information about this error, try `rustc --explain E0502`.
 error: could not compile `ownership_demo` due to previous error
 ```
 
-咦！！！
+咦！在有着对某个值的不可变引用时，*也是* 不可以对其有可变引用的。不可变引用的用户们，并不期望他们所引用的值，在他们眼皮底下突然就变掉！不过由于仅读取数据的不可变引用，不具备对其他读取那个数据的引用造成影响，因此多个不可变引用倒是可以的。
+
+请注意引用变量的作用域，是从引入这个变量的地方开始，而持续到那个引用变量最后一次被使用为止。举例来说，由于那个不可变引用变量最后的使用，`println!`，是在那个可变引用变量引入之前发生的，因此下面的代码将会编译：
+
+```rust
+    let mut s = String::from("hello");
+
+    let r1 = &s;
+    let r2 = &s;
+    println! ("r1 与 r2: {}, {}", r1, r2);
+    // 变量 r1 与 r2 在此点位之后便不再被使用
+
+    let r3 = &mut s;    // 这就没问题了
+    println! ("r3: {}", r3);
+```
