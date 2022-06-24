@@ -1,11 +1,17 @@
 fn main() {
-    let reference_to_nothing = dangle();
+    let s = String::from("The quick brown fox jumps over the lazy dog.");
 
-    println! ("reference_to_nothing: {}", reference_to_nothing);
+    println! ("{}", first_word(&s));
 }
 
-fn dangle() -> String {
-    let s = String::from("hello");
+fn first_word(s: &String) -> usize {
+    let bytes = s.as_bytes();
 
-    s
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return i;
+        }
+    }
+
+    s.len()
 }

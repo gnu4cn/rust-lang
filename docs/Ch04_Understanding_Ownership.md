@@ -688,4 +688,24 @@ fn dangle() -> String {
 fn first_word(s: &String) -> ?
 ```
 
+整个 `first_word` 函数，有着一个作为参数的 `&String` 类型。这里不想要所有权，因此这是没问题的。不过应该返回什么呢？这里实在没有一种描述字符串 *局部（part）* 的方式。不过，这里可以返回那个单词的、以一个空格表示出来的结尾的索引。先来试试这个，如下面清单 4-7 所示：
+
+文件名：`src/main.rs`
+
+```rust
+fn first_word(s: &String) -> usize {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return i;
+        }
+    }
+
+    s.len()
+}
+```
+
+*清单 4-7：返回那个 `&String` 参数中一个字节索引值的 `first_word` 函数*
+
 
