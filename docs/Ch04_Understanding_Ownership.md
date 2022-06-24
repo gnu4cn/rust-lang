@@ -635,4 +635,33 @@ For more information about this error, try `rustc --explain E0106`.
 error: could not compile `ownership_demo` due to previous error
 ```
 
-此错误消息提到了一个这里还没有讲到特性：声明周期（lifetimes）。在第 10 章将详细讨论生命周期。
+此错误消息提到了一个这里还没有讲到特性：声明周期（lifetimes）。在第 10 章将详细讨论生命周期。不过，在忽略掉生命周期方面的错误时，那么该错误消息确实包含了这段代码为何是个问题的关键原因：
+
+```console
+this function's return type contains a borrowed value, but there is no value for it to be borrowed from
+```
+
+下面来细看一下，这里的 `dangle` 代码各个阶段到底发生了什么：
+
+文件名：`src/main.rs`
+
+```rust
+fn dangle() -> &String {    // 函数 dangle 返回的是到某个 String 值的引用
+    let s = String::from("hello");  // 变量 s 是个新的 String 值
+
+    &s  // 这里返回了一个到该 String，变量 s 的引用
+}   // 到这里，变量 s 超出了作用域，进而被丢弃了。他的内存就没了。
+    // 危险所在！
+```
+
+由于变量 `s` 是在函数 `dangle` 内部创建的，那么在函数 `dangle` 的代码执行完毕时，变量 `s` 就将被解分配内存。而这里还在尝试返回一个到他的引用。那就意味着这个引用，就会指向到一个无效的 `String`。那就不好了！Rust 是不会允许这样干的。
+
+这里的解决办法，就是直接返回那个 `String` 值：
+
+```rust
+fn dangle() -> String {
+    let s = String::from("hello");
+
+    s
+}
+```
