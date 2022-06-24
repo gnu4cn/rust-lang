@@ -587,3 +587,50 @@ error: could not compile `ownership_demo` due to previous error
     let r3 = &mut s;    // 这就没问题了
     println! ("r3: {}", r3);
 ```
+
+不可变引用变量 `r1` 与 `r2` 的作用域，在 `println!` 语句，即他们最后被使用的地方，之后结束，而这个地方正是那个可变引用变量 `r3` 被创建之前。这些作用域不会重叠，因此这段代码是允许的。识别出引用变量在作用域结束之前的某处不再被使用的编译器能力，叫做 *非词法性生命周期，Non-Lexical Lifetimes, 简写做 NLL*，在 [版本手册](https://doc.rust-lang.org/edition-guide/rust-2018/ownership-and-lifetimes/non-lexical-lifetimes.html) 里可阅读到更多有关 非词法性生命周期 的内容。
+
+虽然这些所有权借用错误，时常令人沮丧，但请记住这正是 Rust 编译器在早期阶段就指出潜在错误（在编译时而不是运行时），并表明问题准确所在位置。代码编写者这才不必去追踪为何数据不是先前设想的那样。
+
+### 悬空引用（dangling references）
+
+但凡带有指针的语言，那么就容易通过在还保留着到某些内存的指针期间，对那些内存进行释放，而创建出 *悬空指针（dangling pointer）* -- 即引用了内存中还曾给了其他引用变量指针的地址（in languages with pointers, it's easy to erroneously create a *dangling pointer* -- a pointer that references a location in memory that my have been given to someone else -- by freeing some memory while preserving a pointer to that memory）。而在 Rust 中，与此形成鲜明对比的是，编译器会确保引用变量绝不会成为悬空引用：在有着某个到一些数据的引用时，编译器就会确保在到数据的引用超出作用域之前，被引用的数据不会超出作用域。
+
+下面就来创建一个悬空引用，看看 Rust 如何以编译器错误，来阻止悬空引用：
+
+文件名：`src/main.rs`
+
+
+```rust
+fn main() {
+    let reference_to_nothing = dangle();
+}
+
+fn dangle() -> &String {
+    let s = String::from("hello");
+
+    &s
+}
+```
+
+下面就是报错：
+
+
+```console
+$ cargo run
+   Compiling ownership_demo v0.1.0 (/home/peng/rust-lang/projects/ownership_demo)
+error[E0106]: missing lifetime specifier
+ --> src/main.rs:5:16
+  |
+5 | fn dangle() -> &String {
+  |                ^ expected named lifetime parameter
+  |
+  = help: this function's return type contains a borrowed value, but there is no value for it to be borrowed from
+help: consider using the `'static` lifetime
+  |
+5 | fn dangle() -> &'static String {
+  |                ~~~~~~~~
+
+For more information about this error, try `rustc --explain E0106`.
+error: could not compile `ownership_demo` due to previous error
+```

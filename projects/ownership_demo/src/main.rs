@@ -1,10 +1,9 @@
 fn main() {
-    let mut s = String::from("hello");
+    let reference_to_nothing = dangle();
+}
 
-    let r1 = &s;
-    let r2 = &s;
-    println! ("r1 与 r2: {}, {}", r1, r2);
+fn dangle() -> &String {
+    let s = String::from("hello");
 
-    let r3 = &mut s;
-    println! ("r3: {}", r3);
+    &s
 }
