@@ -537,3 +537,39 @@ error: could not compile `ownership_demo` due to previous error
 
     let r2 = &mut s;
 ```
+
+
+对于将可变与不可变引用进行结合的情况，Rust 强制了类似规则。下面的代码会导致错误：
+
+```rust
+    let mut s = String::from("hello");
+
+    let r1 = &s;
+    let r2 = &s;
+    let r3 = &mut s;
+
+    println! ("{}, {} 与 {}", r1, r2, r3);
+```
+
+下面就是那个错误：
+
+```console
+$ cargo run
+   Compiling ownership_demo v0.1.0 (/home/peng/rust-lang/projects/ownership_demo)
+error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immutable
+ --> src/main.rs:6:14
+  |
+4 |     let r1 = &s;
+  |              -- immutable borrow occurs here
+5 |     let r2 = &s;
+6 |     let r3 = &mut s;
+  |              ^^^^^^ mutable borrow occurs here
+7 |
+8 |     println! ("{}, {} 与 {}", r1, r2, r3);
+  |                               -- immutable borrow later used here
+
+For more information about this error, try `rustc --explain E0502`.
+error: could not compile `ownership_demo` due to previous error
+```
+
+咦！！！
