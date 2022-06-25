@@ -900,4 +900,18 @@ let s = "Hello, world!";
 
 ### 字符串切片作为函数参数
 
+明白了可取得字面值的切片及 `String` 值，就引出了对 `first_word` 函数的又一项改进，而下面就是函数 `first_word` 的签名：
+
+```rust
+fn first_word(s: &String) -> &str {
+```
+
+更老道的 Rust 公民将把这个函数签名，写着像下面清单 4-9 中所展示的那样，这是因为下面这样写，就实现了在 `&String` 与 `&str` 两种类型值上，可使用同一个函数：
+
+```rust
+fn first_word(s: &str) -> &str {
+```
+
+*清单 4-9：通过对 `s` 参数的类型使用字符串切片，对 `first_word` 函数进行改进*
+
 
