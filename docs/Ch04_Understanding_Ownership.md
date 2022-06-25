@@ -847,4 +847,39 @@ fn first_word(s: &String) -> &str {
 fn second_word(s: &String) -> &str {
 ```
 
+由于编译器会确保到那个 `String` 数据中的各个引用保持有效，因此现在就有了一个简单的、相比之前那个要更难于搞得一团糟的 API 了。还记得在清单 4-8 中那个程序里的错误吧，即那个在已经获取到首个单词结束位置的索引，而随后清除了那个字符串，因此得到的索引就会失效。那段代码虽然逻辑上不正确，但也不会立即给出什么错误来。若继续尝试使用一个空字符串上的首个单词结束索引，这些问题仍会出现。切片就令到这个代码错误不可能了，并实现了更快的发现代码有着问题。使用切片版本的 `first_word` 函数，就会抛出一个编译时错误：
 
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let mut s = String::from("The quick brown fox jumps over the lazy dog.");
+
+    let word = first_word(&s);
+
+    s.clear();
+
+    println! ("首个单词为：{}", word);
+}
+```
+
+下面就是那个编译器错误消息：
+
+```console
+$ cargo run                                                                      ✔ 
+   Compiling ownership_demo v0.1.0 (/home/peng/rust-lang/projects/ownership_demo)
+error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immutable
+ --> src/main.rs:6:5
+  |
+4 |     let word = first_word(&s);
+  |                           -- immutable borrow occurs here
+5 | 
+6 |     s.clear();
+  |     ^^^^^^^^^ mutable borrow occurs here
+7 | 
+8 |     println! ("首个单词为：{}", word);
+  |                                 ---- immutable borrow later used here
+
+For more information about this error, try `rustc --explain E0502`.
+error: could not compile `ownership_demo` due to previous error
+```

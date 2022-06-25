@@ -1,15 +1,11 @@
 fn main() {
-    let s = String::from("The quick brown fox jumps over the lazy dog.");
+    let mut s = String::from("The quick brown fox jumps over the lazy dog.");
 
     let word = first_word(&s);
 
-    println! ("{}", word);
-    println! ("{}", &s[4..9]);
+    s.clear();
 
-
-    let s = String::from("这是一个示例。");
-
-    println! ("{}", first_word(&s));
+    println! ("首个单词为：{}", word);
 }
 
 fn first_word(s: &String) -> &str {
