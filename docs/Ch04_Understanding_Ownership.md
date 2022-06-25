@@ -722,4 +722,119 @@ for (i, &item) in bytes.iter().enumerate() {
 
 在第 13 章，将讨论到迭代器的更多细节。而现在，明白 `iter` 是个返回集合中各个元素的方法，而那个 `enumerate` 则会将 `iter` 的结果进行封装进而将各个元素作为一个元组的组成部分，进行返回即可。自 `enumerate` 返回的元组第一个元素就是索引值，而第二个元素，则是到 `iter` 返回元素的索引。相比由代码编写者自己计算索引，这就要方便一点。
 
-由于 `enumerate` 方法返回了一个元组，因此这里就可以使用模式，来结构那个元组。在 [第 6 章](Ch06_Enums_and_Pattern_Matching.md#patterns-that-bind-to-values)，会对模式进行更多讨论。在那个 `for` 循环中，指定了一个有着用于那个元组中索引的 `i`，以及用于那个元组中单个字节的 `&item` 的模式。由于这里获得的是一个到来自 `.iter().enumerate()` 元素的引用，因此这里在那个模式中使用了 `&` 运算符。
+由于 `enumerate` 方法返回了一个元组，因此这里就可以使用模式，来解构那个元组。在 [第 6 章](Ch06_Enums_and_Pattern_Matching.md#patterns-that-bind-to-values)，会对模式进行更多讨论。在那个 `for` 循环中，指定了一个有着用于那个元组中索引的 `i`，以及用于那个元组中单个字节的 `&item` 的模式。由于这里获得的是一个到来自 `.iter().enumerate()` 元素的引用，因此在那个模式中使用了 `&` 运算符。
+
+在那个 `for` 循环内部，这里通过使用字节字面值语法（the byte literal syntax），就表示空格的字节进行了搜索。在找到空格时，就返回空格的位置。否则就通过使用 `s.len()` 返回该字符串的长度。
+
+```rust
+        if item == b' ' {
+            return i;
+        }
+    }
+
+    s.len()
+```
+
+现在就有了一种找出字符串中第一个单词末尾索引的方法了，不过这里有个问题。这里正返回的光是个 `usize`，然而这个返回值只是在 `&String` 的语境下，才是个有意义的数字。也就是说，由于这个返回的 `usize` 类型值，是源自那个 `String` 值的单独值，因此就没办法保证在以后仍然有效。关于这点，可考虑在清单 4-8 中、用到清单 4-7 中 `first_word` 函数的程序。
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let mut s = String::from("The quick brown fox jumps over the lazy dog.");
+
+    let word = first_word(&s);  // 变量 word 将获得值 5
+
+    s.clear();  // 这个语句会清空该字符串，令其等于 ""
+
+    // 到这里变量 word 仍有着值 5，但已经不再有那个可将值 5 有意义的运用
+    // 到的字符串了。变量 5 现在完全无用了！
+}
+```
+
+*清单 4-8：将来自对 `first_word` 函数调用的返回值存储起来，并在随后修改那个 `String` 值的内容*
+
+该程序会不带任何错误地编译，且同样会在调用了 `s.clear()`后，当使用变量 `word` 时，其仍会完成后续执行（this program compiles without any errors and would do so if we used `word` after calling `s.clear()`）。由于变量 `word` 完全未被连接到变量 `s` 的状态，因此变量 `word` 仍包含着值 `5`。这里仍可使用那个值 `5` 与变量 `s`，来尝试提取出第一个单词，但由于自将值 `5` 保存在 `word` 中以来，变量 `s` 的内容已被修改，因此这样做将是个程序错误。
+
+这种不得不对变量 `word` 中的索引，失去与变量 `s` 中的数据同步的提心吊胆，就会十分烦人且容易发生错误！而在要编写 `second_word` 函数时，对这些索引的管理，将更加脆弱。`second_word` 的函数签名，将务必看起来像下面这样：
+
+```rust
+fn second_word(s: &String) -> (usize, usize) {
+```
+
+现在就得对一个开始 *和* 结束索引保持跟踪，同时甚至还有更多的、要从特定状态中的数据计算出的值，而这些值又完全没有与那种状态联系起来。这样就有了三个无关的、需要同步保持的变量漂浮着。
+
+幸运的是，Rust 有此问题的解决办法，那就是：字符串切片（string slices）。
+
+### 字符串切片
+
+字符串切片是到某个 `String` 类型值部分的引用，而看起来像下面这样：
+
+```rust
+    let s = String::from("The quick brown fox jumps over the lazy dog.");
+
+    let the = &s[0..3];
+    let quick = &s[4..9];
+```
+
+与到整个 `String` 值的引用 `&s` 不同，`the` 是到这个字符串的在 `&s[0..3]` 额外部分 `[0..3]` 那里所指定的部分引用。这里通过指定 `[start_index..ending_index]`，使用了在一对双括号里头的一个范围，而创建出切片来，其中的 `starting_index` 是切片中首个位置，而 `ending_index` 则是比切片中最后位置多一的位置索引。切片数据结构内部，存储着开始位置与该切片的长度，长度即 `ending_index` 减去 `starting_index`。那么在示例 `let quick = &s[4..9];` 中，`quick` 就会包含一个到变量 `s` 的索引 `4` 处字节的指针。
+
+下图 4-6 展示对此进行了展示。
+
+![指向一个 `String` 数据局部的字符串切片](images/Ch04_06.svg)
+
+*图 4-6：指向一个 `String` 数据局部的字符串切片*
+
+以 Rust 的 `..` 范围语法（the `..` range syntax），在要于索引零处开始时，那么就可以丢弃那两个点之前的值。也就是说，写那个开始索引 `0` 与不写，是等价的：
+
+```
+let s = String::from("hello");
+
+let slice = &s[0..2];
+let slice = &s[..2];
+```
+
+对同一个字符串令牌，在切片包含了那个 `String` 的最后字节时，那么就可以丢弃那结尾的数字。即意味着下面的语句是等价的：
+
+```rust
+let s = String::from("hello");
+
+let len = s.len();
+
+let slice = &s[3..len];
+let slice = &s[3..];
+```
+
+要取用整个字符串时，还可以把开始与结束索引都丢弃掉。那么下面的语句就是等价的了：
+
+```rust
+let s = String::from("hello");
+
+let len = s.len();
+
+let slice = &s[0..len];
+let slice = &s[..];
+```
+
+> 注意：字符串切片范围值，必须在有效的 UTF-8 字符边界上出现的。若尝试在多字节字符中间创建字符串切片，那么程序就会以错误退出。这里为介绍字符串切片的目的，而假定本小节中只使用 ASCII 字符；在第 8 章的 [“以 `String` 类型值存储 UTF-8 编码的文本”](Ch08_Common_Collections.md#storing-utf-8-encoded-text-with-strings) 小节，有着对 UTF-8 字符处理的更全面讨论。
+
+
+对这全部字符串切片信息清楚了，就来将 `first_word` 重写巍为返回切片。表示 “字符串切片” 的类型，写做 `&str`：
+
+文件名：`src/main.rs`
+
+```rust
+fn first_word(s: &String) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[..i];
+        }
+    }
+
+    &s[..]
+}
+```
+
+这里是以前面清单 4-7 中所做的同样方式，即查找首次出现的空格，而获取到首个单词末尾的索引。在找到空格后，就运用该字符串的开头，与那个空格的索引，作为字符串切片的开始与结束索引，而返回一个字符串切片。
