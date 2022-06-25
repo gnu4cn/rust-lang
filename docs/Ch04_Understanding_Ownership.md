@@ -883,3 +883,10 @@ error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immuta
 For more information about this error, try `rustc --explain E0502`.
 error: could not compile `ownership_demo` due to previous error
 ```
+
+还记得借用规则里提到，在有着到某数据的不可变引用时，就不能同时有可变引用。由于 `clear` 方法需要清空那个 `String` 值，那么就需要得到一个可变引用。在对 `clear` 方法调用之后的 `println!`，使用了在变量 `word` 里的引用，那么这个不可变引用在 `println!` 那个地方就必须仍将是活动的。Rust 不允许 `clear` 中的可变引用，与 `word` 中的不可变引用同时存在，进而编译失败。可以看出，Rust 不光令到这个 `first_word` 的 API 更易于使用，他还在运行时就消除了这一整类的错误！
+
+
+### 字符串字面值即切片
+
+
