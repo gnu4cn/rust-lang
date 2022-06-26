@@ -6,19 +6,18 @@ struct User {
 }
 
 fn main() {
-    let mut user1 = User {
-        email: String::from("rust@xfoss.com"),
-        username: String::from("unisko"),
+    let user1 = build_user(
+        String::from("rust@xfoss.com"), 
+        String::from("rust_xfoss"));
+
+    println! ("{}, {}", user1.email, user1.username);
+}
+
+fn build_user(email: String, username: String) -> User {
+    User {
+        email,
+        username,
         active: true,
-        sign_in_count: 1
-    };
-
-    user1.email = String::from("java@xfoss.com");
-
-    println! ("{}\n{}\n{}\n{}", 
-        user1.email, 
-        user1.username, 
-        user1.active, 
-        user1.sign_in_count
-    );
+        sign_in_count: 1,
+    }
 }
