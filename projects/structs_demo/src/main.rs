@@ -6,10 +6,19 @@ struct User {
 }
 
 fn main() {
-    let user1 = User {
+    let mut user1 = User {
         email: String::from("rust@xfoss.com"),
         username: String::from("unisko"),
         active: true,
         sign_in_count: 1
     };
+
+    user1.email = String::from("java@xfoss.com");
+
+    println! ("{}\n{}\n{}\n{}", 
+        user1.email, 
+        user1.username, 
+        user1.active, 
+        user1.sign_in_count
+    );
 }

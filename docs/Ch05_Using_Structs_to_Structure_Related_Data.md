@@ -35,3 +35,24 @@ fn main() {
 ```
 
 *清单 5-2：创建出结构体 `User` 的一个实例来*
+
+而要从结构体中获取到指定值，就要使用点表示法（`.`）。在要的仅是该用户的电子邮件地址时，就可以在那些要用到这个值的地方，使用 `user1.email` 。而在该实例为可变时，那么就可以通过使用点表示法，进而给特定字段赋值，而对某个值加以修改。下面的清单 5-3 展示了如何来修改某个可变 `User` 实例 `email` 字段中的值。
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let mut user1 = User {
+        email: String::from("rust@xfoss.com"),
+        username: String::from("unisko"),
+        active: true,
+        sign_in_count: 1
+    };
+
+    user1.email = String::from("java@xfoss.com");
+}
+```
+
+*清单 5-3：对某个 `User` 实例中的 `email` 字段进行修改*
+
+

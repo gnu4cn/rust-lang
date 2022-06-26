@@ -6,3 +6,4 @@
 * [Ch 03 Common Programming Concepts](docs/Ch03_Common_Programming_Concepts.md)
 * [Ch 04 Understanding Ownership](docs/Ch04_Understanding_Ownership.md)
 * [Ch 05 Using Structs To Structure Related Data](docs/Ch05_Using_Structs_to_Structure_Related_Data.md)
+* [SUMMARY](docs/SUMMARY.md)
