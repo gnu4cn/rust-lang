@@ -95,6 +95,25 @@ fn build_user(email: String, username: String) -> User {
 在这里，正创建一个 `User` 结构体的新实例，该结构体有一个名为 `email` 的字段。这里打算将 `email` 字段的值，设置为 `build_user` 函数的 `email` 参数中的值。由于 `email` 字段与 `email` 参数有着同样的名字，因此只就需写下 `email`，而非 `email: email`。
 
 
-### 使用结构体更新语法，从其他实例创建出实例来
+### 使用结构体更新语法，从其他实例创建出实例
+
+创建出包含另一实例绝大部分值，而修改一些值的新实例，通常是有用的做法。而使用 *结构体更新语法（struct update syntax）* 就能做到这点。
+
+首先，在下面的清单 5-6 中展示了如何按常规，不使用更新语法的情况下，创建出在 `user2` 中的一个新 `User` 实例。这里给 `email` 设置了一个新的值，而在其他方面，则使用了来自之前在清单 5-1 中创建的 `user1` 的那些同样值。
+
+```rust
+fn main() {
+    // --跳过代码--
+
+    let user2 = User {
+        active: user1.active,
+        username: user1.username,
+        email: String::from("java@xfoss.com"),
+        sign_in_count: user1.sign_in_count,
+    };
+}
+```
+
+*清单 5-6：使用一个 `user1` 的值创建出一个新的 `User` 实例*
 
 
