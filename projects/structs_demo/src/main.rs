@@ -13,6 +13,7 @@ fn main() {
 
     let user2 = User {
         email: String::from("java@xfoss.com"),
+        username: String::from("java_xfoss"),
         ..user1
     };
 }
