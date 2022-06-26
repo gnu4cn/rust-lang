@@ -8,13 +8,12 @@ struct User {
 fn main() {
     let user1 = build_user(
         String::from("rust@xfoss.com"), 
-        String::from("rust_xfoss"));
+        String::from("rust_xfoss")
+    );
 
     let user2 = User {
-        active: user1.active,
-        username: user1.username,
         email: String::from("java@xfoss.com"),
-        sign_in_count: user1.sign_in_count,
+        ..user1
     };
 }
 
