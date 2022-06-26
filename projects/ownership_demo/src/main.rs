@@ -1,21 +1,8 @@
 fn main() {
-    let mut s = String::from("The quick brown fox jumps over the lazy dog.");
 
-    let word = first_word(&s);
+    let a = [1, 2, 3, 4, 5];
 
-    s.clear();
+    let slice = &a[1..3];
 
-    println! ("首个单词为：{}", word);
-}
-
-fn first_word(s: &String) -> &str {
-    let bytes = s.as_bytes();
-
-    for (i, &item) in bytes.iter().enumerate() {
-        if item == b' ' {
-            return &s[..i];
-        }
-    }
-
-    &s[..]
+    assert_eq! (slice, &[2, 3]);
 }

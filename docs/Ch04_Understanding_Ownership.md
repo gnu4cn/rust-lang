@@ -914,4 +914,67 @@ fn first_word(s: &str) -> &str {
 
 *清单 4-9：通过对 `s` 参数的类型使用字符串切片，对 `first_word` 函数进行改进*
 
+在有个字符串切片时，可直接传递那个字符串切片。而在有个 `String` 值时，则可以传递该 `String` 的切片，或到这个 `String` 的引用。这种灵活性，是利用了 *强制引用解除（deref coercions）* 特性，在第 15 章的 [函数与方法下的显式强制引用解除](Ch05_Smart_Pointers.md#implicit-deref-coercions-with-functions-and-methods) 小节，将讲到的一种特性。定义一个取字符串切片，而非到 `String` 值的引用做参数的函数，令到这个 API 在不丢失任何功能的情况下，变得更为通用和有用：
 
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let s = String::from("The quick brown fox jumps over the lazy dog.");
+
+    // 函数 first_word 在 String 值的切片上有效，不管是部分还是全部的切片
+    let word = first_word(&s[0..6]);
+    println! ("{}", word);
+
+    let word = first_word(&s[..]);
+    println! ("{}", word);
+
+    // 函数 first_word 还在 String 变量的引用上有效，而 String 变量的引用
+    // 与 String 值的整个切片是等价的
+    let word = first_word(&s);
+    println! ("{}", word);
+
+    let s_string_literal = "hello word";
+
+    // 函数 first_word 在字符串字面值上有效，不论是部分还是整体
+    let word = first_word(&s_string_literal[0..6]);
+    println! ("{}", word);
+
+    let word = first_word(&s_string_literal[..]);
+    println! ("{}", word);
+
+    // 由于字符串字面值已经 是 字符串切片，因此无需切片语法，这
+    // 也是有效的!
+    let word = first_word(s_string_literal);
+
+    println! ("{}", word);
+}
+```
+
+### 其他切片
+
+或许已经想到，字符串切片是特定于字符串的。然而还有更多一般的切片类型呢。请看看下面这个数组：
+
+```rust
+let a = [1, 2, 3, 4, 5];
+```
+
+就跟要引用字符串的部分一样，也可能要引用数组的部分。那么就将像下面这样来完成对数组一部分的引用：
+
+```rust
+
+    let a = [1, 2, 3, 4, 5];
+
+    let slice = &a[1..3];
+
+    assert_eq! (slice, &[2, 3]);
+```
+
+这个切片变量 `slice` 的类型为 `&[i32]`。数组切片的原理与字符串切片一样，都是经由存储到首个元素的引用，和切片长度实现的。今后将对所有其他类型的集合，运用到这种切片。在第 8 章讲到各种矢量时，就会对这些集合加以讨论。
+
+
+## 本章小节
+
+所有权、借用及切片等概念，在编译时确保了 Rust 程序中的内存安全。Rust 语言给到的对内存使用的掌控方式，与其他系统编程语言相同，不过会让数据的所有者，在其超出作用域时自动清理他的数据，这就意味着不必编写并调试额外代码，来实现这样的控制了。
+
+所有权对 Rust 程序的很多其他部分都有影响，因此在本书其余部分，都将更进一步的涉及到这些所有权的概念。接下来就移步第 5 章，进而在结构体 `struct` 中，如何将小块数据组装起来。
