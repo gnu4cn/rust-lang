@@ -313,4 +313,44 @@ fn area(dimensions: (u32, u32)) -> u32 {
 
 ### 以结构体进行重构：加入更多意义
 
+这里要使用结构体，通过给数据打上标签，来加入更多意义。可将这里正在使用的元组，以给整体命名，同时还给那些部分命名，而转换成为一个结构体。如下清单 5-10 所示。
+
+文件名：`src/main.rs`
+
+```rust
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+fn main() {
+    let rect1 = Rectangle {
+        width: 30, 
+        height: 50,
+    };
+
+    println! (
+        "该矩形的面积为 {} 平方像素。",
+        area(&rect1)
+    );
+}
+
+fn area(rectangle: &Rectangle) -> u32 {
+    rectangle.width * rectangle.height
+}
+```
+
+*清单 5-10：定义一个 `Rectangle` 结构体*
+
+这里就已定义了一个结构体，并将其命名为了 `Rectangle`。在那对花括弧内部，以 `width` 和 `height` 定义了两个字段，两个字段都具有 `u32` 类型。随后在 `main` 函数中，创建出了 `Rectangle` 的一个宽为 `30`，高为 `50` 的特定实例。
+
+现在的 `area` 函数被定义为带有一个参数，该参数被命名为 `rectangle`，其类型是结构体 `Rectangle` 实例的不可变借用。如同在第 4 章中提到的那样，这里是要借用那个结构体，而非要取得那个结构体的所有权。在此方式下，`main` 函数仍保留着那个结构体实例的所有权，进而可继续使用变量 `rect1`，这就是在函数 `area` 签名与函数调用中，使用 `&` 符号的原因。
+
+`area` 函数会访问那个 `Rectangle` 实例的 `width` 和 `height` 字段。`area` 的函数签名现在表达的正是这里想要的了：使用 `Rectangle` 的 `width` 和 `height` 字段，计算出他的面积。这就传达出了这里的宽与高是相互关联，同时这样做还给到了这些值描述性的名称，而非使用之前元组的索引 `0` 和 `1` 了。这在代码清晰上得了一分。
+
+
+### 使用派生特质加入有用功能
+
+**Adding Useful Functionality with Derived Traits**
+
 
