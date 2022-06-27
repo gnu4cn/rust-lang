@@ -9,5 +9,5 @@ fn main() {
         height: 50,
     };
 
-    println! ("rect1 为：{}", rect1);
+    println! ("rect1 为：{:?}", rect1);
 }
