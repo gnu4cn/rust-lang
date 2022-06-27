@@ -9,12 +9,5 @@ fn main() {
         height: 50,
     };
 
-    println! (
-        "该矩形的面积为 {} 平方像素。",
-        area(&rect1)
-    );
-}
-
-fn area(rectangle: &Rectangle) -> u32 {
-    rectangle.width * rectangle.height
+    println! ("rect1 为：{}", rect1);
 }
