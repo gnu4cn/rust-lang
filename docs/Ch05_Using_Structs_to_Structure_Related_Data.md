@@ -203,8 +203,7 @@ fn main() {
 > 编译器会抱怨他需要生命周期说明符：
 
 ```console
-
-cargo run
+$ cargo run
    Compiling structs_demo v0.1.0 (/home/peng/rust-lang/projects/structs_demo)
 error[E0106]: missing lifetime specifier
  --> src/main.rs:3:15
@@ -235,4 +234,77 @@ help: consider introducing a named lifetime parameter
 
 For more information about this error, try `rustc --explain E0106`.
 error: could not compile `structs_demo` due to 2 previous errors
-`` `
+```
+
+> 在第 10 章中，就会讨论怎样来修复这些错误，尔后就可以在结构体中存储引用变量了，而至于现在，则只会使用像是 `String` 这样的具有所有权的类型，而避开使用像是 `&str` 这样的引用，来解决这个问题。
+
+
+## 一个使用结构体的示例程序
+
+为搞明白何时会想要使用结构体，下面就来编写一个计算矩形面积的程序。这里会先从使用单个变量开始，并在随后对这个程序进行重构，直到使用结构体为止。
+
+下面就来以 `Cargo` 构造一个名为 `rectangles` 的新二进制项目，该项目将取得以像素指定的矩形宽和高，并计算出该矩形的面积。下面的清单 5-8 给出了一个简短的程序，该程序正是有着在这个项目的 `src/main.rs` 中的做法：
+
+```rust
+fn main() {
+    let width1 = 30;
+    let height1 = 50;
+
+    println! (
+        "该矩形的面积为 {} 平方像素。",
+        area(width1, height1)
+    );
+}
+
+fn area(width: u32, height: u32) -> u32 {
+    width * height
+}
+```
+
+*清单 5-8：计算由单独宽和高变量指明的矩形面积*
+
+现在，使用 `cargo run` 允许这个程序：
+
+```console
+$ cargo run
+   Compiling rectangles v0.1.0 (/home/peng/rust-lang/projects/rectangles)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.17s
+     Running `target/debug/rectangles`
+该矩形的面积为 1500 平方像素。
+```
+
+这段代码通过以两个边长调用 `area` 函数，而成功计算出了该矩形的面积，不过还可以进一步让这段代码更为清晰已读。
+
+这段代码的问题，体现在 `area` 函数签名中：
+
+```rust
+fn area(width: u32, height: u32) -> u32 {
+```
+
+`area` 函数是要计算某个矩形面积的，但这里编写的该函数，有着两个参数，同时在这个程序中，并未清楚表明那两个参数是有联系的。将宽和高组织在一起，代码就会更具易读性，且更具可管理性。在第 3 章的 [元组类型](Ch03_Common_Programming_Concepts.md#the-tuple-type) 小节，就已讨论过一种可能那样做的方式：使用元组。
+
+
+### 以元组进行重构
+
+下面的清单 5-9 给出了使用了元组的另一版本的这个程序。
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let rect1 = (30, 50);
+
+    println! (
+        "该矩形的面积为 {} 平方像素。",
+        area(rect1)
+    );
+}
+
+fn area(dimensions: (u32, u32)) -> u32 {
+    dimensions.0 * dimensions.1
+}
+```
+
+*清单 5-9：以一个元组来对矩形的宽和高进行指定*
+
+
