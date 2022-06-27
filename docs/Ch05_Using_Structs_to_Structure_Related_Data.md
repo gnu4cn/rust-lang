@@ -176,4 +176,63 @@ fn main() {
 
 > **结构体数据的所有权**
 >
+> 在前面清单 5-1 中的 `User` 结构体定义里，使用的是带有所有权的 `String` 类型，而非 `&str` 字符串切片类型。由于那里是要该结构体的各个实例拥有他自己的数据，且是要在整个结构体有效期间，实例数据有效，因此那里使用 `String` 类型而非 `&str` 类型就是有意而为之的了。
+>
+> 结构体存储到其他变量持有数据的引用，也是可能的，但这样做就需要用到 *生命周期（lifetimes）*，而生命周期则是会在后面的第 10 章会讨论到的一个 Rust 特性。生命周期确保某个结构体引用到的数据，会在该结构体有效期间保持有效。譬如说如同下面这样，在尝试在某个结构体中存储不带生命周期的引用时；这就不会工作：
 > 
+> 文件名：`src/main.rs`
+
+```rust
+struct User {
+    active: bool,
+    username: &str,
+    email: &str,
+    sign_in_count: u64,
+}
+
+fn main() {
+    let user1 = User {
+        email: "someone@example.com",
+        username: "someusername123",
+        active: true,
+        sign_in_count: 1,
+    };
+}
+```
+
+> 编译器会抱怨他需要生命周期说明符：
+
+```console
+
+cargo run
+   Compiling structs_demo v0.1.0 (/home/peng/rust-lang/projects/structs_demo)
+error[E0106]: missing lifetime specifier
+ --> src/main.rs:3:15
+  |
+3 |     username: &str,
+  |               ^ expected named lifetime parameter
+  |
+help: consider introducing a named lifetime parameter
+  |
+1 ~ struct User<'a> {
+2 |     active: bool,
+3 ~     username: &'a str,
+  |
+
+error[E0106]: missing lifetime specifier
+ --> src/main.rs:4:12
+  |
+4 |     email: &str,
+  |            ^ expected named lifetime parameter
+  |
+help: consider introducing a named lifetime parameter
+  |
+1 ~ struct User<'a> {
+2 |     active: bool,
+3 |     username: &str,
+4 ~     email: &'a str,
+  |
+
+For more information about this error, try `rustc --explain E0106`.
+error: could not compile `structs_demo` due to 2 previous errors
+`` `
