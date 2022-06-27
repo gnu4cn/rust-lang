@@ -140,4 +140,19 @@ fn main() {
 
 **Using Tuple Structs without Named Fields to Create Different Types**
 
+Rust 还支持看起来像元组的结构体，叫做 *元组结构体（tuple structs）*。元组结构体这一类型，多了类型名称中结构体这一部分所提供的意义，却并没有与各字段相关联的名字；而是，元组结构体他们那些字段的类型。在要给予整个元组一个名字，并令到元组成为不同于其他元组的一种类型，且在如同在常规结构体中那样，给各个字段取名字是多余的等等，在这样的情况下，元组结构体就会有用。
 
+要定义一个元组结构体，就要以 `struct` 关键字和该结构体的名字开头，接着是一些在元组中的类型。比如，下面分别定义和使用了两个元组结构体 `Color` 与 `Point`:
+
+```rust
+struct Color(u8, u8, u8);
+struct Point(i32, i32, i32);
+
+fn main() {
+    let black = Color(0, 0, 0);
+    let white = Color(255, 255, 255);
+    let origin = Point(0, 0, 0);
+}
+```
+
+请注意，由于这里的 `black` 与 `origin` 两个值是不同元组结构体的实例，因此他们属于不同类型。
