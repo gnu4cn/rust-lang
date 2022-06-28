@@ -8,6 +8,10 @@ impl Rectangle {
     fn area(&self) -> u32 {
         self.width * self.height
     }
+
+    fn width(&self) -> bool {
+        self.width > 0
+    }
 }
 
 fn main() {
@@ -19,4 +23,8 @@ fn main() {
     println! ("该矩形的面积为 {} 平方像素。",
         rect1.area()
     );
+
+    if rect1.width() {
+        println! ("该矩形的宽不为零；他的宽为 {}", rect1.width);
+    }
 }
