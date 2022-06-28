@@ -532,3 +532,4 @@ fn main() {
 *清单 5-13：在 `Rectangle` 结构体上定义一个 `area` 方法*
 
 
+为定义 `Rectangle` 上下文中的函数，这里开启了一个 `Rectangle ` 的 `impl` （implementation）代码块。此 `impl` 代码块里头的所有物件，都会与那个 `Rectangle` 类型相关联。随后这里就把原来那个 `area` 函数，移入到这个 `impl` 的花括弧里，并将函数签名中的首个（而在此情形下，也是唯一的）参数，及函数体中的各处，均修改为 `self`。在 `main` 函数，即原先调用 `area` 函数与将 `rect1` 作为参数传递的地方，现在就可以使用 *方法语法* 来调用那个在 `Rectangle` 实例上的 `area` 方法了。
