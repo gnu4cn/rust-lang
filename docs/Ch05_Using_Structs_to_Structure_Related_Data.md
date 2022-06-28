@@ -396,4 +396,139 @@ error[E0277]: `Rectangle` doesn't implement `std::fmt::Display`
 error[E0277]: `Rectangle` doesn't implement `Debug`
 ```
 
+不过编译器再度给到一个帮助性注释：
+
+```console
+   = help: the trait `Debug` is not implemented for `Rectangle`
+   = note: add `#[derive(Debug)]` to `Rectangle` or manually `impl Debug for Rectangle`
+```
+
+Rust *确实* 带有打印输出调试信息的功能，不过这里必须显式地选择上那功能，从而使得那功能对这个结构体可用。而要实现这个目的，就要在紧接着结构体定义之前，加上外层属性 `#[derive(Debug)]`（the outer attribute `#[derive(Debug)`），如下面的清单 5-12 所示。
+
+文件名：`src/main.rs`
+
+```rust
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+fn main() {
+    let rect1 = Rectangle {
+        width: 30, 
+        height: 50,
+    };
+
+    println! ("rect1 为：{:?}", rect1);
+}
+```
+
+*清单 5-12：加入派生 `Debug` 特质的属性，进而运用调试格式化将那个 `Rectangle` 实例打印出来*
+
+此时在运行这个程序时，就不会收到任何错误了，且会看到下面的输出：
+
+```console
+$ cargo run
+   Compiling rectangles v0.1.0 (/home/peng/rust-lang/projects/rectangles)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.20s
+     Running `target/debug/rectangles`
+rect1 为：Rectangle { width: 30, height: 50 }
+```
+
+很棒！这虽不是最漂亮的输出，但他给出了该实例全部字段的值，这无疑在调试期间会有帮助。在有着较大的结构体时，让输出更容易阅读一点就会有用；对于那些更大结构体的情形，就可在 `println!` 中使用 `{:#?}` 而非 `{:?}`。而在这个示例中，使用 `{:#?}` 样式将输出：
+
+```console
+cargo run
+   Compiling rectangles v0.1.0 (/home/peng/rust-lang/projects/rectangles)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.18s
+     Running `target/debug/rectangles`
+rect1 为：Rectangle {
+    width: 30,
+    height: 50,
+}
+```
+
+使用 `Debug` 格式化将某个值打印出来的另一种方式，就是使用 [`dbg!` 宏](https://doc.rust-lang.org/std/macro.dbg.html)，这个 `dbg!` 宏会占据某个表达式的所有权，而将那个 `dbg!` 宏调用出现在代码中所在的文件与行号，与那个表达式的结果值一并打印出来，同时返回结果值的所有权（another way to print out a value using the [`dbg!` macro](https://doc.rust-lang.org/std/macro.dbg.html), which takes ownership of an expression, prints the file and line number of where that `dbg!` macro call occurs in your code along with the resulting value of that expression, and returns ownership of the value）。
+
+> 注意：对 `dbg!` 宏的调用，会打印到标准错误控制台流（the standard error console stream, `stderr`），这与 `println!` 宏打印到标准输出控制台流（the standard output console stream, `stdout`）相反。在第 12 章中的 [将错误消息写到标准错误而非标准输出](Ch12_An_I_O_Project_Building_a_Command_Line_Program.md#writing-error-messages-to-standard-error-instead-of-standard-output) 小节，将讲到更多有关 `stderr` 与 `stdout` 的内容。
+
+以下是个其中对赋值给 `width` 字段，以及在变量 `rect1` 中的整个结构体的值感兴趣的示例：
+
+```rust
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+fn main() {
+    let scale = 2;
+
+    let rect1 = Rectangle {
+        width: dbg! (30 * scale), 
+        height: 50,
+    };
+
+    dbg! (&rect1);
+}
+```
+
+这里可将 `dbg!` 放在表达式 `30 * scale` 附近，同时由于 `dbg!` 返回了该表达式值的所有权，因此 `width` 字段将获取到与不在此处调用 `dbg!` 同样的值。由于这里不想要 `dbg!` 取得 `rect1` 的所有权，因此在下一个对 `dbg!` 的调用中，使用到到 `rect1` 的引用。下面就是这个示例输出的样子：
+
+```console
+cargo run
+   Compiling rectangles v0.1.0 (/home/peng/rust-lang/projects/rectangles)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.22s
+     Running `target/debug/rectangles`
+[src/main.rs:11] 30 * scale = 60
+[src/main.rs:15] &rect1 = Rectangle {
+    width: 60,
+    height: 50,
+}
+```
+
+这里就可以看到，输出的第一部分来自 `src/main.rs` 文件的第 10 行，正是对表达式 `30 * scale` 进行调式的地方，而该表达式的结果值即为 `60`（在整数原生值上实现的 `Debug` 格式化只打印他们的值）。在 `src/main.rs` 第 14 行上的 `dbg!` 调用，输出了 `rect1`，即那个 `Rectangle` 结构体的值。这个输出使用了 `Rectangle` 类型的良好 `Debug` 格式化。在尝试搞清楚代码在做什么时，这个 `dbg!` 宏真的会相当有用！
+
+除 `Debug` 特质外，Rust 业已提供了数个与 `derive` 属性一起使用的其他特质，这些特质把有用的行为表现，添加到那些定制类型。Rust 提供的那些特质及其行为，在 [附录 C](Ch21_Appendix.md#c-derivable-traits) 小节中有列出。在第 10 章中，就会涉及到怎样去实现这些有着定制行为的特质，以及怎样创建自己的特质。除了 `derive` 之外，同样还有许多别的属性；有关属性的更多信息，请参阅 [Rust 参考手册的 “属性” 小节](https://doc.rust-lang.org/reference/attributes.html)。
+
+这里的 `area` 函数，是相当专用的：他只会计算矩形的面积。由于 `area` 方法不会在其他任何类型上工作，因此将此行为与这里的 `Rectangle` 结构体更紧密的联系起来，就会变得有帮助。接下来就要看看，怎样通过将这个 `area` 函数，转变成一个定义在这里的 `Rectangle` 类型上的方法，而继续重构这段代码。
+
+
+## 方法语法
+
+*方法* 与函数类似：是以 `fn` 关键字和一个名称，来声明出方法，方法可以有参数和返回值，同时包含了在某个地方方法被调用时，运行的一些代码。与函数不同的地方在于，方法是在结构体（或者枚举或特质对象，关于枚举即特质对象，将分别在第 6 和 17 章讲到）的语境里面定义的，且方法的首个参数将始终是 `self`，这个 `self` 表示方法被调用的那个结构体实例本身。
+
+
+### 方法的定义
+
+下面就来将那个将一个 `Rectangle` 实例作为参数的 `area` 函数，修改为定义在 `Rectangle` 结构体上的 `area` 方法，如下清单 5-13 所示：
+
+```rust
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+impl Rectangle {
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+}
+
+fn main() {
+    let rect1 = Rectangle {
+        width: 30, 
+        height: 50,
+    };
+
+    println! ("该矩形的面积为 {} 平方像素。",
+        rect1.area()
+    );
+}
+```
+
+*清单 5-13：在 `Rectangle` 结构体上定义一个 `area` 方法*
+
 
