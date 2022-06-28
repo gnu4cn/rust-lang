@@ -611,4 +611,11 @@ fn main() {
 
 *清单 5-14：对尚未成文的 `can_hold` 方法进行使用*
 
+由于 `rect2` 的两个边都小于 `rect1` 的两个边，而 `rect3` 的两个边都要长于 `rect1` 的两个边，因此预期的输出将看起来像下面这样：
 
+```console
+rect1 可以装下 rect2 吗？true
+rect1 可以装下 rect3 吗？false
+```
+
+这里知道要定义的是个方法，因此那将会在 `impl Rectangle` 代码块内部。而方法的名称将是 `can_hold`，同时他会取得作为参数的另一 `Rectangle` 值的不可变借用。
