@@ -579,4 +579,36 @@ p1.distance(&p2);
 (&p1).distance(&p2);
 ```
 >
-> 第一个语句看起来要清楚不少。由于方法有着明确的接收者 -- 即 `self` 的类型，因此这种自动引用的行为会生效。在给定了接收者和方法名字后，Rust 就可明确
+> 第一个语句看起来要清楚不少。由于方法有着明确的接收者 -- 即 `self` 的类型，因此这种自动引用的行为会生效。在给定了接收者和方法名字后，Rust 就可明确地确定出该方式到底是在读取（`&self`）、改变（`&mut self`），或者是在消费（`self`）。Rust 实现了方法接收者的隐式借用这一事实，是为实现所有权系统在编程实践中符合人机交互，而所做努力的较大部分（the fact that Rust makes borrowing implicit for method receivers is a big part of making ownership ergonomic in practice）。
+
+### 有多个参数的方法
+
+下面就来通过在 `Rectangle` 结构体上实现另一个方法，练习一下方法的运用。这次就要 `Rectangle` 的一个实例，去取得另一个 `Rectangle` 的实例，并在第二个 `Rectangle` 完全能放入到 `self` （即第一个 `Rectangle` ）里头时返回 `true`；否则这个方法就会返回 `false`。也就是，一旦定义了这个 `can_hold` 方法，就要能够编写下面清单 5-14 中的那个程序。
+
+文件名：`src/main.rs`
+
+```rust
+fn main() {
+    let rect1 = Rectangle {
+        width: 30, 
+        height: 50,
+    };
+
+    let rect2 = Rectangle {
+        width: 10, 
+        height: 40,
+    };
+
+    let rect3 = Rectangle {
+        width: 60, 
+        height: 45,
+    };
+
+    println! ("rect1 可以装下 rect2 吗？{}", rect1.can_hold(&rect2));
+    println! ("rect1 可以装下 rect3 吗？{}", rect1.can_hold(&rect3));
+}
+```
+
+*清单 5-14：对尚未成文的 `can_hold` 方法进行使用*
+
+
