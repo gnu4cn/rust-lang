@@ -620,5 +620,21 @@ rect1 可以装下 rect2 吗？true
 rect1 可以装下 rect3 吗？false
 ```
 
-这里知道要定义的是个方法，因此那将会在 `impl Rectangle` 代码块内部。而方法的名称将是 `can_hold`，同时他会取得作为参数的另一 `Rectangle` 值的不可变借用。通过观察调用该方法的代码，就可以得出那个参数的类型了：`rect1.can_hold(&rect2)` 传入的是 `&rect2`，正是到变量 `rect2` 的不可变借用，而 `rect2` 又是 `Rectangle` 的一个实例。由于这里只需要读取 `rect2`（而非写入，那就意味着将需要一个可变借用了），因此这样做是有理由的。
+这里知道要定义的是个方法，因此那将会在 `impl Rectangle` 代码块内部。而方法的名称将是 `can_hold`，同时他会取得作为参数的另一 `Rectangle` 值的不可变借用。通过观察调用该方法的代码，就可以得出那个参数的类型了：`rect1.can_hold(&rect2)` 传入的是 `&rect2`，正是到变量 `rect2` 的不可变借用，而 `rect2` 又是 `Rectangle` 的一个实例。由于这里只需要读取 `rect2`（而非写入，那就意味着将需要一个可变借用了），同时这里是想要 `main` 函数保留 `rect2` 的所有权，这样就可以在 `can_hold` 方法调用之后，还可以再度使用 `rect2`，因此这样做是有理由的。`can_hold` 方法的返回值，将是个布尔值，而该方法的实现会检查 `self` 的宽和高，相应地是否都大于另一个 `Rectangle` 的宽和高。下面就把这个新的 `can_hold` 方法，加入到清单 5-13 的 `impl` 代码块，如下清单 5-15 所示。
 
+文件名：`src/main.rs`
+
+```rust
+impl Rectangle {
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        (self.width > other.width && self.height > other.height) ||
+            (self.width > other.height && self.height > other.width) 
+    }
+}
+```
+
+*清单 5-15：对在 `Rectangle` 上的、取另一 `Rectangle` 实例作为参数的 `can_hold` 方法进行实现*
