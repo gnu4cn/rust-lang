@@ -6,4 +6,72 @@
 
 许多语言都有枚举这一特性，不过在各个语言中的枚举能力是不同的。Rust 的枚举与那些函数式语言，诸如 F#、OCaml 及 Haskell 等中的 *代数数据类型（algebraic data types）* 最为相似。
 
+## 定义一个枚举
+
+枚举是不同于结构体的第二种定义定制数据类型的方式。下面就来看看一种在代码中可能表达的情形，并见识一下为何在此情形下，相比于结构体，枚举是有用且更恰当的。假设说这里需要对 IP 地址进行处理。目前仅有两种用于 IP 地址的标准：版本四和版本六。由于这两个标准是程序将遇到的 IP 地址仅有的可能性，因此就可以 *列举出（enumerate）* 全部可能的变种，这正是枚举（enumeration） 名字得来之处。
+
+任何 IP 地址都只能是版本四或版本六的地址，而不会同时两个都是。由于枚举值只能是枚举变种之一，那么 IP 地址的这个属性，令到枚举数据结构（the enum data structure）恰当起来。而版本四和版本六两种地址，从根本上说都是 IP 地址，那么在代码对适用于任意类别 IP 地址的情形加以处理时，版本四和版本六地址都应当作同一类型对待。
+
+在代码中，可通过定义一个 `IpAddrKind` 枚举，并列出 IP 地址可能的类别，即 `V4` 和 `V6`，来表达这个概念。下面就是该枚举的变种：
+
+```rust
+enum IpAddrKind {
+    V4,
+    V6,
+}
+```
+
+现在 `IpAddrKind` 就是一个可在代码中别的地方使用的定制数据类型了。
+
+
+### 枚举取值
+
+可像下面这样，创建出 `IpAddrKind` 两个变种的实例来：
+
+```rust
+    let four = IpAddrKind::V4;
+    let six = IpAddrKind::V6;
+```
+
+请注意，该枚举的两个变种，是在其标识符的命名空间之下的，且这里使用了双冒号将标识符和变种分隔开。由于现在这两个值 `IpAddrKind::V4` 与 `IpAddrKind::V6` 都是这同一类型：`IpAddrKind`，因此这就变得有用了。随后就可以，比如，定义一个取任意 `IpAddrKind` 类型值的函数：
+
+```rust
+fn route(ip_kind: IpAddrKind) {}
+```
+
+进而就能以这两个变种对这个函数进行调用了：
+
+```rust
+    route(IpAddrKind::V4);
+    route(IpAddrKind::V6);
+```
+
+枚举的使用甚至还有更多好处。在还没有一种存储具体 IP 地址 *数据（data）* 的时候，就要进一步思考一下这里的 IP 地址类型；这是只知道 IP 地址数据为什么 *类别（king）*。根据在第 5 章中掌握的结构体知识，那么可能很想用下面清单 6-1 中的结构体来解决这个问题。
+
+```rust
+enum IpAddrKind {
+    V4,
+    V6,
+}
+
+struct IpAddr {
+    kind: IpAddrKind,
+    address: String,
+}
+
+fn main() {
+    let home = IpAddr {
+        kind: IpAddrKind::V4,
+        address: String::from("127.0.0.1"),
+    };
+
+    let loopback = IpAddr {
+        kind: IpAddrKind::V6,
+        address: String::from("::1"),
+    };
+}
+```
+
+*清单 6-1：使用结构体 `struct` 来存储 IP 地址的数据与 `IpAddrKind` 变种*
+
 
