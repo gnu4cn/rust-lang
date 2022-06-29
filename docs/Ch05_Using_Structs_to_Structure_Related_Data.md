@@ -638,3 +638,48 @@ impl Rectangle {
 ```
 
 *清单 5-15：对在 `Rectangle` 上的、取另一 `Rectangle` 实例作为参数的 `can_hold` 方法进行实现*
+
+在以清单 5-14 中的 `main` 函数来运行此代码是，就会得到想要的输出。方法可取得在 `self` 参数之后添加到其签名的多个参数，同时这些参数就像函数中的参数一样生效。
+
+### 关联函数（associated functions）
+
+
+由于定义在 `impl` 代码块内部的全部函数，都是与那个在 `impl` 关键字之后命名的类型相关联的，因此他们都叫做 *关联函数（associated functions）*。因为一些关联函数不需要用到该类型的实例，因此可把这些函数定义为不将 `self` 作为首个参数的关联函数（而这样的话，这些函数就不是方法了）。前面就已用到过这样的一个关联函数：`String::from` 函数就是定义在 `String` 类型上的。
+
+非方法的关联函数，通常用于将会返回一个该结构体新实例的构造函数。比如，这里就可提供有着一维参数，并将该一维参数同时用作宽和高的这么一个关联函数，如此就令到相比于两次指定同样值，而更容易创建除正方形的 `Rectangle`。
+
+文件名：`src/main.rs`
+
+```rust
+impl Rectangle {
+    fn square(size: u32) -> Rectangle {
+        Rectangle {
+            width: size,
+            height: size,
+        }
+    }
+}
+```
+
+要调用这个关联函数，就要使用带有结构体名字的 `::` 语法；`let sq = Rectangle::square(3);` 就是一个示例；该函数是是在那个结构体的命名空间之下的：`::` 语法，同时用于关联函数，与由模组创建出的命名空间。在第 7 章会讨论到 Rust 的模组概念。
+
+### 多个 `impl` 代码块
+
+所有结构体都允许有多个 `impl` 代码块。比如前面的清单 5-15 就与下面清单 5-16 给出的代码等价，其中各个方法都在各自的 `impl` 代码块中：
+
+```rust
+impl Rectangle {
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+}
+
+impl Rectangle {
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        (self.width > other.width && self.height > other.height) ||
+            (self.width > other.height && self.height > other.width) 
+    } 
+}
+```
+
+*清单 5-16：使用多个 `impl` 代码块对清单 5-15 进行重写*
