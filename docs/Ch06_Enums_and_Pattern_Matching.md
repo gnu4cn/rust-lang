@@ -74,4 +74,6 @@ fn main() {
 
 *清单 6-1：使用结构体 `struct` 来存储 IP 地址的数据与 `IpAddrKind` 变种*
 
+这里已定义了有着两个字段的结构体 `IpAddr`：一个类型为 `IpAddrKind` （即先前定义的那个枚举）的 `kind` 字段，以及一个类型为 `String` 的 `address` 字段。这里有该结构体的两个实例。第一个是 `home`，而他有着与地址数据 `127.0.0.1` 关联的 `IpAddrKind::V4` 作为其 `kind` 的值。第二个实例为 `loopback`。这个实例则有不同的 `IpAddrKind` 变种作为其 `kind` 的值，即 `V6`，与 `kind` 关联的是地址 `::1`。由于这里使用了结构体将 `kind`  与 `address` 值捆绑在一起，因此现在这个 `IpAddrKind` 的变种就与那个 `String` 值关联起来了。
+
 
