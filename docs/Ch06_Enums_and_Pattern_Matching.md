@@ -193,4 +193,8 @@ fn main() {
 下面就来看看标准库中另一个甚为常见和有用的枚举：`Option`。
 
 
+### `Option` 枚举及其超越空值的诸多优点
 
+**The `Option` Enum and Its Advantages Over Null Values**
+
+本小节会探讨 `Option` 的案例研究，`Option` 是由标准库定义的另一个枚举。`Option` 类型编码了某个值可能会是某个物件，或可能什么都不属于的这种甚为常见的场景（the `Option` type encodes the very common scenario in which a value could be something or it could be nothing）。比如在请求某个含有一些项目的清单的第一个项目时，就会
