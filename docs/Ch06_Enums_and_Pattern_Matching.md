@@ -144,4 +144,53 @@ enum Message {
 
 *清单 6-2：每个变种都存储了不同数量和类型值的 `Message` 枚举*
 
+这个枚举有着四个带有不同类型数据的变种：
+
+- `Quit` 变种完全没有与其关联的数据；
+- `Move` 变种像结构体一样，有着两个命名的字段；
+- `Write` 变种包含了单个 `String`；
+- `ChangeColor` 编程包含了三个 `i32` 的值。
+
+定义一个有着一些如上面清单 6-2 中变种的枚举，与定义不同种类的结构体定义类似，不同在于枚举未使用关键字 `struct`，且所有变种在 `Message` 类型下组织在了一起。下面这些结构体，就可保存之前各个枚举变种所保存的那些同样数据：
+
+```rust
+struct QuitMessage; // 单元结构体
+struct MoveMessage {
+    x: i32,
+    y: i32,
+}
+struct WriteMessage(String);    // 元组结构体
+struct ChangeColorMessage(i32, i32, i32);   //  元组结构体
+```
+
+不过假如这里使用了不同的、有着各自类型的结构体，那么就无法轻易地定义出一个接收原本在清单 6-2 中定义的、单一类型的  `Message` 枚举那样的，接收全部这些类别消息的函数了。
+
+枚举与结构体之间，还有另外一个相似点：正如在结构体上使用 `impl` 关键字定义出一些方法，在枚举上定义方法也是可以的。下面就是一个可定义在这里的 `Message` 枚举上、名为 `call` 的方法：
+
+```rust
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write (String),
+    ChangeColor(i32, i32, i32),
+}
+
+impl Message {
+    fn call(&self) {
+        // 方法体将定义在这里
+    }
+}
+
+fn main() {
+
+    let m = Message::Write(String::from("hello"));
+    m.call();
+}
+```
+
+方法体将使用 `self`，来获取方法调用所在变种实例值。在此示例中，已创建了一个有着值 `Message::Write(String::from("hello"))` 的变量 `m`，而那就是在 `m.call()` 运行时，`call` 方法体中的那个 `self`。
+
+下面就来看看标准库中另一个甚为常见和有用的枚举：`Option`。
+
+
 
