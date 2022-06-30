@@ -6,4 +6,5 @@
 * [Ch 03 Common Programming Concepts](docs/Ch03_Common_Programming_Concepts.md)
 * [Ch 04 Understanding Ownership](docs/Ch04_Understanding_Ownership.md)
 * [Ch 05 Using Structs To Structure Related Data](docs/Ch05_Using_Structs_to_Structure_Related_Data.md)
+* [Ch 06 Enums And Pattern Matching](docs/Ch06_Enums_and_Pattern_Matching.md)
 * [SUMMARY](docs/SUMMARY.md)
