@@ -205,4 +205,32 @@ fn main() {
 
 > 我把他叫做我的10亿美元失误。那个时候我正在设计某门面向对象语言中的首个综合类型系统。目的是要在编译器自动执行的检查之下，确保全部引用使用，都应绝对安全。仅仅因为空值引用变量实现起来很容易，我当时就没能顶住诱惑，把他加入到特性集了。这个举动，业已造成了数不胜数的代码错误、漏洞及系统崩溃等等问题，在过去 40 余年里，这些问题可能已经造成大概 10 亿美金的痛苦和伤害。
 
+`null` 值的问题在于，当尝试将 `null` 值用作非 `null` 值时，就会得到某种错误。由于这种 `null` 或非 `null` 的属性遍布各处，因此极容易犯下此类错误。
+
+但 `null` 试图表达的概念，还是有用的：`null` 是个因某些原因，而当前为无效或空缺的值。
+
+问题不是真的在于这个概念，而在于针对性的实现。由于这些原因，Rust 就没有空值，但他确实有一个可对值存在或空缺这个概念，进行编码的枚举。这个枚举就是 `Option<T>`，而这个枚举 [由标准库定义](https://doc.rust-lang.org/std/option/enum.Option.html) 为下面这样：
+
+```rust
+enum Option<T> {
+    None,
+    Some(T),
+}
+```
+
+这个 `Option<T>` 是如此重要，以至于在 Rust 序曲（the prelude）中甚至都包含了；是不需要显式地将其带入到作用域的（注：*原生类型、这里的 `Option<T>`，以及前面的 `String` 类型等等，就是这样的包含在序曲中的类型，无需显式地带入到作用域，就可以直接使用*）。该枚举的变种也已包含在 Rust 序曲中：可直接在不带前缀 `Option::` 的情况下直接使用 `Some` 与 `None`（注：*那么 `Some` 与 `None` 就被列为了 Rust 关键字了*）。`Option<T>` 仍然只是常规枚举，而 `Some<T>` 与 `None` 仍然是类型 `Option<T>` 的变种。
+
+这里的 `<T>` 语法，是个到目前为止还未讲到的 Rust 特性。他是个泛型参数，而在第 10 章将更详细的涉及到泛型。至于现在，只需明白 `<T>` 表示 `Option` 枚举的 `Some` 变种，可保存任意类型的一条数据，而在 `T` 位置处用到的各个具体类型，会让整个 `Option<T>` 类型成为各异的类型（for now, all you need to know is that `<T>` means the `Some` variant of the `Option` enum can hold one piece of data of any type, and that each concrete type that gets used in place of `T` makes the overall `Option<T>` type a different type）。以下是使用 `Option` 来保存数字与字符串类型的一些示例：
+
+```rust
+    let some_numer = Some(5);
+    let some_string = Some("一个字符串");
+
+    let absent_number: Option<i32> = None;
+```
+
+`some_number` 的类型为 `Option<i32>`。`some_string` 的类型为 `Option<&str>`，是个不同的类型。由于这里已在 `Some` 变种里面指定了值，因此 Rust 可推导出这些类型来。而对于 `absent_number`，Rust 就要求注释整个 `Option` 类型：编译器无法通过仅查看一个 `None` 值，而推导出相应的 `Some` 变种的类型来。这里告诉了 Rust，这里计划的是 `absent_number` 为类型 `Option<i32>`。
+
+在有着一个 `Some` 值时，就知道存在着一个值，且该值是保存在 `Some` 内部的。而在有个 `None` 值时，某种意义上讲，这表示了与空值同样的情况：没有一个有效值。那么究竟为什么有着 `Option<T>` 就是要比有着空值 `null` 好呢？
+
 
