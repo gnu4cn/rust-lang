@@ -233,4 +233,28 @@ enum Option<T> {
 
 在有着一个 `Some` 值时，就知道存在着一个值，且该值是保存在 `Some` 内部的。而在有个 `None` 值时，某种意义上讲，这表示了与空值同样的情况：没有一个有效值。那么究竟为什么有着 `Option<T>` 就是要比有着空值 `null` 好呢？
 
+简而言之，由于 `Option<T>` 和 `T` (其中的 `T` 可以是任意类型) 为不同类型，因此编译器就不会允许将一个 `Option<T>` 值，当作一个必然的有效值来使用。比如，由于下面这段代码是在尝试将一个 `i8` 值，添加到某个 `Option<i8>` 上，因此这段代码不会编译：
 
+```rust
+    let x: i8 = 5;
+    let y: Option<i8> = Some(5);
+
+    let sum = x + y;
+```
+
+在运行这段代码时，就会得到下面这样的错误消息：
+
+```console
+$ cargo run                                                                                     ✔ 
+   Compiling enum_demo v0.1.0 (/home/peng/rust-lang/projects/enum_demo)
+error[E0277]: cannot add `Option<i8>` to `i8`
+  --> src/main.rs:24:17
+   |
+24 |     let sum = x + y;
+   |                 ^ no implementation for `i8 + Option<i8>`
+   |
+   = help: the trait `Add<Option<i8>>` is not implemented for `i8`
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `enum_demo` due to previous error
+```

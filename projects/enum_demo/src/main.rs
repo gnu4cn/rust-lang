@@ -18,8 +18,8 @@ impl Message {
 
 fn main() {
 
-    let some_numer = Some(5);
-    let some_string = Some("一个字符串");
+    let x: i8 = 5;
+    let y: Option<i8> = Some(5);
 
-    let absent_number: Option<i32> = None;
+    let sum = x + y;
 }
