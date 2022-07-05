@@ -258,3 +258,5 @@ error[E0277]: cannot add `Option<i8>` to `i8`
 For more information about this error, try `rustc --explain E0277`.
 error: could not compile `enum_demo` due to previous error
 ```
+
+强悍！事实上，这个错误消息表示，由于 `i8` 与 `Option<i8>` 属于不同类型，因此 Rust 不知道怎样将一个 `i8` 值与一个 `Option<i8>` 值相加。当在 Rust 中有着一个类型好比 `i8` 这样的值时，编译器就会保证始终有个有效值。在对那个值进行使用前，可不必检查他是不是 `null`，而可放心地加以处理。只有在有个 `Option<i8>` 类型（或其他任何正在使用的`Option<T>` 枚举类型值）的变量时，才真地必须关心可能并无值，同时编译器将确保在使用该值前，显式地处理无值的情况。
