@@ -319,6 +319,26 @@ fn value_in_cents(coin: Coin) -> u8 {
 }
 ```
 
-### 绑定到多个值的模式
+### 绑定到值的模式
+
+`match` 支臂的另一有用特性，便是这些支臂可绑定到值与模式进行匹配值的多个部分（another useful feature of `match` arms is that they can bind to the parts of the values that match the pattern）。这就是从枚举变种提取出值的原理。
+
+作为一个示例，下面就来将这里的枚举变种之一，修改为其内部保存数据。自 1999 年到 2008 年，美国在 25 美分硬币的一面，铸造上 50 个州不同的设计。别的硬币则没有这样的州份设计，因此只有这些 25 美分硬币才有这额外价值。那么就可以通过修改这个 `Quarter` 变种为内部包含一个 `UsState` 值，来将此信息添加到这里的 `enum` 类型，就如同下面清单 6-4 中所做的。
+
+```rust
+#[derive(Debug)]    // 这样就可以很快对州份进行检查
+enum UsState {
+    Alabama,
+    Alaska,
+    // --跳过--
+}
+
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter(UsState),
+}
+```
 
 
