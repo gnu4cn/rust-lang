@@ -471,4 +471,20 @@ fn move_player() {}
 
 由于那最后的模式将匹配到未特别列出的全部值，因此尽管这里并未列出 `u8` 类型变量有的全部可能值，这段代码仍会编译。这种捕获全部的模式，满足了 `match` 表达式务必彻底的要求。请注意由于这些模式是求值的，因此这里必须将那个捕获全部支臂放在最后。若在捕获全部之后，添加了其他支臂，那么 Rust 就会告警，这是由于这些在捕获全部之后的支臂根本不会匹配到！
 
+Rust 还有一种在不愿使用捕获全部模式中的值时，可使用的一种模式：`_`，这是一种特别的、未与该值绑定的其他所有值。这种模式告诉 Rust 这里将不会使用该值，因此 Rust 就不会发出有关某个未用到变量的告警了（Rust also has a pattern we can use when we don't want to use the value in the catch-all pattern: `_`, which is a special pattern that matches any value and doen't not bind to that value. This tells Rust we aren't going to use the value, so Rust won't warn us about an unused varialbe）。
 
+下面就来将那个游戏的规则修改为，在投中骰子的三点和七点之外别的点数时，就必须再投一次骰子。那么这里就不需要用到那个点数值了，因此就可以将这里的代码修改为使用 `_` 而不是那个名为 `other` 的变量：
+
+```rust
+    let dice_roll = 9;
+
+    match dice_roll {
+        3 => add_fancy_hat(),
+        7 => remove_fancy_hat(),
+        _ => reroll(),
+    }
+
+    fn add_fancy_hat() {}
+    fn remove_fancy_hat() {}
+    fn reroll() {}
+```
