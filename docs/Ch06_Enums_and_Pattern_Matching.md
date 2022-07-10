@@ -399,4 +399,54 @@ fn main() {
         Some(n) => Some(n + 1),
 ```
 
-`Some(5)` 与 `Some(n)` 匹配吗？
+`Some(5)` 与 `Some(n)` 匹配吗？当然是匹配的！这里有着同样的变种。这个 `n` 绑定的是包含在 `Some` 中的那个值，因此 `n` 就会取到值 `5`。随后该 `match` 支臂中的代码就会被执行，从而就会将 `1` 加到 `n` 的值，并创建出一个新的、内部有着这里的和 `6` 的 `Some` 值来。
+
+现在来看看清单 6-5 中第二个 `plus_one` 的调用，其中 `x` 则是 `None` 了。这里进入到那个 `match` 表达式，并与第一个支臂进行比较。
+
+```rust
+        None => None,
+```
+
+他是匹配的！就没有要加的值了，因此程序就停下来并返回 `=>` 右侧上的那个 `None` 值。由于第一个支臂已经匹配，因此就不会再比较其他支臂了。
+
+在许多场合，将 `match` 表达式与枚举结合都是有用的。在 Rust 代码中将会看到很多这样的模式：对某个枚举的 `match` 操作，将某个变量绑定到内部数据，并随后据此执行代码（`match` against an enum, bind a variable to the data inside, and then execute code based on it）。在刚开始的时候这显得有些难以琢磨，而一旦熟悉了这种模式，就会希望在全部语言中都有这样的模式。这样的模式一直是编程者的最爱。
+
+
+### 匹配要彻底（Matches Are Exhaustive）
+
+这里有个需要讨论到的 `match` 表达式的另一方面。想想这个有着代码错误而不会编译的 `plus_one` 版本：
+
+```rust
+    fn plus_one(x: Option<i32>) -> Option<i32> {
+        match x {
+            Some(n) => Some(n + 1),
+        }
+    }
+```
+
+这里没有对 `None` 情形加以处理，因此该代码就会引起错误。幸运的是，那是个 Rust 知道怎样取捕获的代码错误。在尝试编译此代码时，就会得到这样的错误：
+
+```console
+$ cargo run
+   Compiling enum_demo v0.1.0 (/home/peng/rust-lang/projects/enum_demo)
+error[E0004]: non-exhaustive patterns: `None` not covered
+   --> src/main.rs:2:11
+    |
+2   |     match x {
+    |           ^ pattern `None` not covered
+    |
+note: `Option<i32>` defined here
+    = note: the matched value is of type `Option<i32>`
+help: ensure that all possible cases are being handled by adding a match arm with a wildcard pattern or an explicit pattern as shown
+    |
+3   ~         Some(n) => Some(n + 1),
+4   ~         None => todo!(),
+    |
+
+For more information about this error, try `rustc --explain E0004`.
+error: could not compile `enum_demo` due to previous error
+```
+
+Rust 是知道这里未曾覆盖到每种可能情形，并甚至清楚这里忘记了那个模式！ Rust 中的 `match` 表达式要是 *彻底的（exhaustive）*：为了让代码有效，就必须穷尽所有的可能性。尤其是在 `Option<T>` 这个示例中，在 Rust 阻止这里忘记显式地处理 `None` 这个情形时，在这里可能会有个 `null` 值时，他就保护了避免有个值的错误假设，进而让那个先前讨论到的十亿美金错误称为不可能了。
+
+### 捕获所有模式与 `_` 占位符（Catch-all Patterns and the `_` Placeholder）
