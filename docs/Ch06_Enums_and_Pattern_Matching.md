@@ -366,4 +366,37 @@ fn value_in_cents(coin: Coin) -> u8 {
 
 在前一小节，那里是想要在运用 `Option<T>` 时，从 `Some` 情形中获取到那个内部的 `T` 值；像前面对 `Coin` 枚举所做的那样，也可以这样来对 `Option<T>` 加以处理！比较的不再是那些硬币，而是将比较 `Option<T>` 的两个变种，不过那个 `match` 表达式的原理还是一样的。
 
+下面就假设说要编写一个取 `Option<i32>` 类型值的函数，同时当 `Option<i32>` 里面有个值时，就将 `1` 加到那个值上。在 `Option<i32>` 里没有值时，该函数则会返回 `None` 值，并不会尝试执行任何运算。
 
+归功于 `match` 表达式，这个函数写起来很容易，他将看起来像下面清单 6-5 这样。
+
+```rust
+fn plus_one(x: Option<i32>) -> Option<i32> {
+    match x {
+        None => None,
+        Some(n) => Some(n + 1),
+    }
+}
+
+fn main() {
+    let five = Some(5);
+    let none = None;
+    println! ("{:?}, {:?}", plus_one(five), plus_one(none));
+}
+```
+
+*清单 6-5：在 `Option<i32>` 类型上运用了 `match` 表达式的一个函数*
+
+下面就来详细检视一下 `plus_one` 函数的首次执行。在调用 `plus_one(five)` 时，`plus_one` 函数体中的变量 `x` 将有着值 `Some(5)`。之后就会与 `match` 表达式的各个支臂进行比较。
+
+```rust
+        None => None,
+```
+
+该 `Some(5)` 值不与模式 `None` 匹配，因此就会继续到下一支臂。
+
+```rust
+        Some(n) => Some(n + 1),
+```
+
+`Some(5)` 与 `Some(n)` 匹配吗？
