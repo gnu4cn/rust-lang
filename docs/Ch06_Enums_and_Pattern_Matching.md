@@ -341,4 +341,24 @@ enum Coin {
 }
 ```
 
+来设想一下有个朋友是在尝试收集全部 50 个州份的 25 美分硬币。在按照硬币类型对零钱进行分类的同时，还将叫出与每个 25 美分硬币关联的州份名字，如此就可以在发现那个 25 美分硬币，是那位朋友还没有的时候，就可以把那个硬币添加到收藏。
+
+而在这个代码的 `match` 表达式中，就要添加一个名为 `state` 的变量到匹配变种 `Coin::Quarter` 的那些值。在有 `Coin::Quarter` 匹配时，这个 `state` 变量就会绑定到那个 25 美分硬币的状态值。随后就可以在那个支臂的代码里，使用 `state` 变量了，如同下面这样：
+
+```rust
+fn value_in_cents(coin: Coin) -> u8 {
+    match coin {
+        Coin::Penny => 1,
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter(state: UsState) => {
+            println! ("来自 {:?} 州份的 25 美分硬币！", state);
+            25
+        }
+    }
+}
+```
+
+这时在调用了 `value_in_cents(Coin::Quarter(UsState::Alaska))` 后，`coin` 就将是 `Coin::Quarter(UsState::Alaska)`。在将该值与各支臂进行比较时，在到达 `Coin::Quarter(state: UsState)` 支臂之前，是不会有任何支臂于其匹配的。而在 `Coin::Quarter(state: UsState)` 支臂处，`state` 所绑定的，将是值 `UsState::Alaska`。这时就可以使用那个 `println!` 表达式中的绑定，进而就从 `Quarter` 的 `Coin` 枚举变种，获取到那个内部 `state` 值了。
+
 
