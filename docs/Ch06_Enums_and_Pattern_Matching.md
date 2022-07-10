@@ -447,6 +447,21 @@ For more information about this error, try `rustc --explain E0004`.
 error: could not compile `enum_demo` due to previous error
 ```
 
-Rust 是知道这里未曾覆盖到每种可能情形，并甚至清楚这里忘记了那个模式！ Rust 中的 `match` 表达式要是 *彻底的（exhaustive）*：为了让代码有效，就必须穷尽所有的可能性。尤其是在 `Option<T>` 这个示例中，在 Rust 阻止这里忘记显式地处理 `None` 这个情形时，在这里可能会有个 `null` 值时，他就保护了避免有个值的错误假设，进而让那个先前讨论到的十亿美金错误称为不可能了。
+Rust 是知道这里未曾覆盖到每种可能情形，并甚至清楚这里忘记了那个模式！ Rust 中的 `match` 表达式要是 *彻底的（exhaustive）*：为了让代码有效，就必须穷尽所有的可能性。尤其是在 `Option<T>` 这个示例中，在 Rust 阻止这里忘记显式地处理 `None` 这个情形时，在这里可能会有个 `null` 值时，他就保护了避免有个值的错误假设，进而让那个先前讨论到的十亿美金错误成为不可能了。
 
 ### 捕获所有模式与 `_` 占位符（Catch-all Patterns and the `_` Placeholder）
+
+运用枚举，还可以对少数特定值采取特别动作，而对所有其他值采取一种默认动作。设想正在实现某个游戏，其中在投中了骰子上的 3 点时，游戏角色就不会移动，而是会收到一顶新的帽子道具。而在投中 7 点时，游戏角色会失去一定道具帽子。对于其他所有点数值，游戏角色都会在游戏板上移动相应数目的格子。下面就是个实现了该逻辑的 `match` 表达式，其中的骰子点数结果，是硬编码而非随机值，至于其他由不带函数体的函数所表示的逻辑，则是由于实现这些函数超出了本示例的范围：
+
+```rust
+let dice_roll = 9;
+match dice_roll {
+    3 => add_fancy_hat(),
+    7 => remove_fancy_hat(),
+    other => move_player(other),
+}
+
+fn add_fancy_hat() {}
+fn remove_fancy_hat() {}
+fn move_player() {}
+```
