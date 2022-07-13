@@ -488,3 +488,24 @@ Rust 还有一种在不愿使用捕获全部模式中的值时，可使用的一
     fn remove_fancy_hat() {}
     fn reroll() {}
 ```
+
+由于这里在最后的支臂中，显式地忽略了全部其他值，因此该示例也是满足 `match` 表达式的穷尽要求的；这里并未忘记掉任何东西。
+
+若再一次修改此游戏的规则，修改为在抛出即非三点也非七点的其他点数时，什么也不会发生，那么就可以通过使用单元值（即在 [元组类型](Ch03_Common_Programming_Concepts.md#the-tuple-type) 小节中讲到的那个空元组类型）作为该 `_` 支臂后的代码，来表达这样的游戏规则：
+
+```rust
+let dice_roll = 9;
+
+match dice_roll {
+    3 => add_fancy_hat(),
+    7 => remove_fancy_hat(),
+    _ => (),
+}
+
+fn add_fancy_hat() {}
+fn remove_fancy_hat() {}
+```
+
+这里就显式地告诉 Rust，这里将不使用那些不与先前支臂匹配的全部其他值，且在此情形下这里不要运行任何代码。
+
+在 [第 18 章](Ch18_Patterns_and_Matching.md) 将涉及到更多有关模式与匹配的内容。而现在就要移步到 `if let` 语法，在那些使用 `match` 表达式显得多余的情形下，`if let` 语法就会有用。
