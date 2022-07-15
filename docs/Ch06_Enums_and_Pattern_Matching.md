@@ -539,6 +539,8 @@ fn remove_fancy_hat() {}
 
 `if let` 语法会接收由等号分隔的一个模式与一个表达式。他与 `match` 原理相同，其中的表达式被给到 `match` 表达式，而其中的模式就是 `match` 表达式的第一支臂。在此示例中，模式即为 `Some(max)`，而这个 `max` 就绑定到了 `Some` 里面的那个值。由此，这里随后就可以与在相应的 `match` 支臂中使用 `max` 的同样方式，在后面的那个 `if let` 代码块中对 `max` 进行使用。而在该值 `config_max` 不与该模式匹配时，那个 `if let` 代码块中的代码，就不会运行。
 
+> ***注***：`if let` 实际上是两部分，其中 `let Some(max) = config_max` 是个 scrutinee expression。
+
 使用 `if let` 语法，就意味着较少输入、较少的缩进，以及更少的样板代码。不过会损失 `match` 表达式强制要求的穷尽检查。是根据特定情形下，手头正在做的事情，在 `match` 表达式与 `if let` 语法之间加以选择的，以及考量为收获到简洁，而是否值得损失穷尽性检查。
 
 也就是说，可将 `if let` 当作，在值与某个模式匹配时运行代码，并在之后忽略所有其他值的 `match` 表达式的语法糖（in other words, you can think of `if let` as syntax sugar for a `match` that runs code when the value matches one pattern and then ignores all other values）。
