@@ -510,6 +510,17 @@ fn remove_fancy_hat() {}
 
 在 [第 18 章](Ch18_Patterns_and_Matching.md) 将涉及到更多有关模式与匹配的内容。而现在就要移步到 `if let` 语法，在那些使用 `match` 表达式显得多余的情形下，`if let` 语法就会有用。
 
-### `if let` 下的简洁控制流
+## `if let` 下的简洁控制流
 
+`if let` 语法，实现了将 `if` 与 `let` 关键字，结合为不那么冗长的，处理与一个模式相匹配，而忽略其余模式的一些值的处理方式（the `if let` syntax lets you combine `if` and `let` into a less verbose way to handle that match one pattern while ignoring the rest）。设想下面清单 6-6 中的这个程序，该程序是要对 `config_max` 变量中的 `Option<u8>` 值进行匹配，而只打算在该值为 `Some` 变种时，才执行代码。
 
+```rust
+    let config_max = Some(3u8);
+
+    match config_max {
+        Some(max) => println! ("极大值被配置为了 {}"， max);
+        _ => ();
+    }
+```
+
+*清单 6-6：一个仅在乎当值为 `Some` 时运行代码的 `match` 表达式*
