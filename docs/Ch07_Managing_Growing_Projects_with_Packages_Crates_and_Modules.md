@@ -64,4 +64,4 @@ main.rs
     - 在文件 `src/garden.rs` 里的代码；
     - 在文件 `src/garden/mod.rs` 里的代码；
 
-+ **子模组的声明（declaring submodules）**：
++ **子模组的声明（declaring submodules）**：在除了代码箱根文件之外的、将被编译为代码箱一部分的其他任何文件（比如 `src/garden.rs`）中，都可以声明子模组（比如 `mod vegetables；`）。
