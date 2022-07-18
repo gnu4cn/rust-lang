@@ -66,4 +66,59 @@ main.rs
 
 + **子模组的声明（declaring submodules）**：在除了代码箱根文件之外的、将被编译为代码箱一部分的其他任何文件（比如 `src/garden.rs`）中，都可以声明子模组（比如 `mod vegetables；`）。编译器将在命名为父模组的目录里，在以下地方，查找那些子模组内部代码：
     - 内联代码，即直接在 `mod vegetables` 语句之后的代码，此时 `mod vegetables` 之后不再是分号，而是花括号的代码块；
-    -
+    - 在文件 `src/garden/vegetables.rs` 文件中；
+    - 在文件 `src/garden/vegetables/mod.rs` 文件中。
+
+- **到模组中代码的路径（paths to code in modules）**：一旦模组被编译为了代码箱的一部分，就可以在该代码箱的任何地方，通过使用路径，对那个模组中的代码（比如，`garden` 模组的子模组 `vegetables` 中的 `Asparagus` 类型）进行引用。
+
+- **私有与公共（private vs public）**：默认情况下，模组内的代码对该模组的父模组是私有的。要令到模组成为公共模组，就要使用 `pub mod` 而非 `mod` 来声明该模组。而要令到公共模组中的各个项目也成为公共项目，那么就要在这些项目的声明之前使用 `pub` 关键字。
+
+- **`use` 关键字**：在某个作用域内，`use` 关键字会创建出到各个项目的快捷方式，从而减少那些长路径的重复。在任何可引用到 `crate::garden::vegetables::Asparagus` 的作用域中，都可以使用 `use crate::garden::vegetables::Asparagus;` 语句，创建出一个快捷方式，而在随后就只需要写出 `Asparagus` 来在该作用域中使用上那个类型了。
+
+
+下面是个名为 `backyard`、对这些规则加以演示的二进制代码箱。该代码箱的目录，也叫做 `backyard`，包含了下面这些文件与目录：
+
+```console
+backyard
+├── Cargo.lock
+├── Cargo.toml
+└── src
+    ├── garden
+    │   └── vegetables.rs
+    ├── garden.rs
+    └── main.rs
+```
+
+该代码箱的根文件，在此实例中即为 `src/main.rs`，包含下面的代码：
+
+文件名：`src/main.rs`
+
+```rust
+use crate::garden::vegetables::Asparagus;
+
+pub mod garden;
+
+fn main() {
+    let plant = Asparagus {};
+    println! ("I'm growing {:?}!", plant);
+}
+```
+
+语句 `pub mod garden;`，表示编译器会包含他在 `src/garden.rs` 中找到的代码，也就是：
+
+文件名：`src/garden.rs`
+
+```rust
+pub mod vegetables;
+```
+
+而语句 `pub mod vegetables;` 表示在 `src/garden/vetables.rs` 中的代码也会被编译器包含：
+
+```rust
+#[derive(Debug)]
+pub struct Asparagus {}
+```
+
+现在就来进入到这些规则的细节，并在实际操作中对他们进行演示吧！
+
+
