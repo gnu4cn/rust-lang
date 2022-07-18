@@ -64,4 +64,6 @@ main.rs
     - 在文件 `src/garden.rs` 里的代码；
     - 在文件 `src/garden/mod.rs` 里的代码；
 
-+ **子模组的声明（declaring submodules）**：在除了代码箱根文件之外的、将被编译为代码箱一部分的其他任何文件（比如 `src/garden.rs`）中，都可以声明子模组（比如 `mod vegetables；`）。
++ **子模组的声明（declaring submodules）**：在除了代码箱根文件之外的、将被编译为代码箱一部分的其他任何文件（比如 `src/garden.rs`）中，都可以声明子模组（比如 `mod vegetables；`）。编译器将在命名为父模组的目录里，在以下地方，查找那些子模组内部代码：
+    - 内联代码，即直接在 `mod vegetables` 语句之后的代码，此时 `mod vegetables` 之后不再是分号，而是花括号的代码块；
+    -
