@@ -130,4 +130,32 @@ pub struct Asparagus {}
 
 举例来说，这里要编写一个提供到饭馆功能的库代码箱。那么就会定义一些函数的签名，而将这些函数的函数体留作空白，这样来专注于代码的组织，而非在代码中具体实现一个饭馆出来。
 
-在餐饮行业，饭馆的一些部分被称作 *前台，front of house*，而其余部分则被称作 *后厨，back of house*。前台是顾客们所在的地方；这是饭馆领台给食客安排位置、服务员拿到菜单和买单，以及调酒师制作饮品的地方。而后厨则是大厨和厨师们在厨房做菜、
+在餐饮行业，饭馆的一些部分被称作 *前台，front of house*，而其余部分则被称作 *后厨，back of house*。前台是顾客们所在的地方；这是饭馆领台给食客安排位置、服务员拿到菜单和买单，以及调酒师制作饮品的地方。而后厨则是大厨和厨师们在厨房做菜、洗碗工做清洁工作，以及经理们完成行政工作的地方。
+
+这里就可以将那些函数组织到嵌套在代码箱的一些模组中，从而把该代码箱以真实饭馆运作的方式，架构起来。通过运行 `cargo new --lib restaurant` 命令，创建出一个新的、名为 `restaurant` 的库；然后把下面清单 7-1 中的代码，放入到文件 `src/lib.rs` 里，而定义出一些模组与函数签名来。
+
+文件名：`src/lib.rs`
+
+```rust
+mod front_of_house {
+    mod hosting {
+        fn add_to_waitlist() {}
+
+        fn seat_at_table() {}
+    }
+
+    mod serving {
+        fn take_order() {}
+
+        fn serve_order() {}
+
+        fn take_payment() {}
+    }
+}
+```
+
+*清单 7-1：一个包含着其他的、随后具有函数模组的`front_of_house` 模组（a `front_of_house` module containing other modules that then contain functions）*
+
+这里是以关键字 `mod` 开头，并随后指定出该模组的名字（在这里，就是`front_of_house`），并在该模组代码体前后放上一对花括号，而定义出模组的。在模组内部，可以有其他模组，即这里的 `hosting` 与 `serving` 模组。模组也可以保有其他项目，诸如结构体、枚举、常量、特质（traits），或者在清单 7-1 中的那些函数等等。
+
+
