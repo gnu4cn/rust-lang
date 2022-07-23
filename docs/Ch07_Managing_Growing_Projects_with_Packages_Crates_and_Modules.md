@@ -186,4 +186,20 @@ crate
 
 **Paths for Referring to an Item in the Module Tree**
 
+为讲清 Rust 在何处找到模组树中的某个项目，这里要使用与在文件系统中导航时同样方式的路径。在要调用某个函数时，就需要获悉他的路径。
 
+而路径则可以有两种形式：
+
+- *绝对路径（a absolute path）* 是通过使用代码箱名字的（对于来自外部代码箱的代码）或 `crate` 字面值（对于来自当前代码箱的代码）的，开始自某个代码箱根部；
+- *相对路径（a relative path）* 则是自当前模组开始，并使用了 `self`、`super` 关键字，或当前模组中的某个标识符。
+
+绝对与相对路径，后面跟着的都是以双冒号（`::`）分隔的一个或多个标识符。
+
+这里来回到清单 7-1 中的示例。该怎样调用那个 `add_to_waitlist` 函数呢？这与问及那个 `add_to_waitlist` 函数的路径为何？是同样的。下面的清单 7-3 包含了清单 7-1，只是移除了一些模组与函数。这里将演示从一个新的、定义在该代码箱根部的函数 `eat_at_restaurant`，调用 `add_to_waitlist` 函数的两种方式。该 `eat_at_restaurant` 函数，是这个库代码箱公共 API 的一部分，因此这里较要将其以 `pub` 关键字进行标记。在后面的 [以 `pub` 关键字对路径进行暴露](#exposing-paths-with-the-pub-keyword) 小节，就会了解到更多有关 `pub` 关键字的知识。请注意这个示例尚不会编译；后面会解释这是为什么。
+
+文件名：`src/lib.rs`
+
+```rust
+```
+
+### <a id="exposing-paths-with-the-pub-keyword"></a> 以 `pub` 关键字对路径加以暴露
