@@ -200,6 +200,27 @@ crate
 文件名：`src/lib.rs`
 
 ```rust
+mod front_of_house {
+    mod hosting {
+        fn add_to_waitlist() {}
+    }
+}
+
+pub fn eat_at_restaurant() {
+    // 绝对路径方式
+    crate::front_of_house::hosting::add_to_waitlist();
+
+    // 相对路径方式
+    front_of_house::hosting::add_to_waitlist();
+}
 ```
+
+*清单 7-3：使用绝对与相对路径方式调用 `add_to_waitlist` 函数*
+
+在 `eat_at_restaurant` 中第一次调用那个 `add_to_waitlist` 函数，使用了绝对路径。由于这个 `add_to_waitlist` 函数是定义在与 `eat_at_restaurant` 同一个代码箱，这意味着此处可以使用 `crate` 关键字，来开启一个绝对路径。
+
+在字面值 `crate` 值之后，这里包含了后续的各个模组，直到抵达 `add_to_waitlist` 处。那么就可以联想到有着这同样结构的文件系统，而在文件系统中，就会指明路径 `/front_of_house/hosting/add_to_waitlist`，来运行那个 `add_to_waitlist` 程序；使用 `crate` 字面值名字，而自该代码箱根部开始，就跟使用 `/` 来从 shell 中文件系统根部开始一样。
+
+在 `eat_at_restaurant` 中第二次调用 `add_to_waitlist` 时，使用了绝对路径。该路径是以 `front_of_house`，即与 `eat_at_restaurant` 定义在模组树的同一级别的模组名字开始的。此处等价的、将会使用到的文件系统路径即为 `front_of_house/hosting/add_to_waitlist`。以某个名字开始，就意味着该路径是绝对的。
 
 ### <a id="exposing-paths-with-the-pub-keyword"></a> 以 `pub` 关键字对路径加以暴露
