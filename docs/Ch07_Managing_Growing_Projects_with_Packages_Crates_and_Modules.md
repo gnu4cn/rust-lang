@@ -223,4 +223,10 @@ pub fn eat_at_restaurant() {
 
 在 `eat_at_restaurant` 中第二次调用 `add_to_waitlist` 时，使用了绝对路径。该路径是以 `front_of_house`，即与 `eat_at_restaurant` 定义在模组树的同一级别的模组名字开始的。此处等价的、将会使用到的文件系统路径即为 `front_of_house/hosting/add_to_waitlist`。以某个名字开始，就意味着该路径是绝对的。
 
+对使用相对或是绝对路径的选择，是要基于 Rust 项目将要作出的决定。该决定会取决于是否更偏向于，将程序项目定义代码迁移到单独的地方，还是要将程序项目定义代码与要使用到这些定义的代码放在一起。比如，在将 `front_of_house` 模组与 `eat_at_restaurant` 函数，移入到一个名为 `custom_experience` 的模组中时，那么就需要更新那个到 `add_to_waitlist` 的绝对路径，但那个相对路径则仍将有效。但如果将 `eat_at_restaurant` 函数单独移入到一个名为 `dining` 的模组，那么到 `add_to_waitlist` 函数的绝对路径就会依旧保持那样，但那个相对路径则需要被更新。由于后面多半会对那些代码定义进行迁移，且对程序项的调用是各自独立的，因此优先选项即是指明绝对路径。
+
+接下来就要尝试编译清单 7-3，并找出他为何不编译的原因！所得到的错误如下清单 7-4 所示。
+
+
+
 ### <a id="exposing-paths-with-the-pub-keyword"></a> 以 `pub` 关键字对路径加以暴露
