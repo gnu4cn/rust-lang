@@ -227,6 +227,35 @@ pub fn eat_at_restaurant() {
 
 接下来就要尝试编译清单 7-3，并找出他为何不编译的原因！所得到的错误如下清单 7-4 所示。
 
+```console
+$ cargo build                                                                ✔ 
+   Compiling restaurant v0.1.0 (/home/peng/rust-lang/restaurant)
+error[E0603]: module `hosting` is private
+ --> src/lib.rs:9:28
+  |
+9 |     crate::front_of_house::hosting::add_to_waitlist();
+  |                            ^^^^^^^ private module
+  |
+note: the module `hosting` is defined here
+ --> src/lib.rs:2:5
+  |
+2 |     mod hosting {
+  |     ^^^^^^^^^^^
 
+error[E0603]: module `hosting` is private
+  --> src/lib.rs:12:21
+   |
+12 |     front_of_house::hosting::add_to_waitlist();
+   |                     ^^^^^^^ private module
+   |
+note: the module `hosting` is defined here
+  --> src/lib.rs:2:5
+   |
+2  |     mod hosting {
+   |     ^^^^^^^^^^^
 
+For more information about this error, try `rustc --explain E0603`.
+error: could not compile `restaurant` due to 2 previous errors
+```
+*清单 7-4：*
 ### <a id="exposing-paths-with-the-pub-keyword"></a> 以 `pub` 关键字对路径加以暴露
