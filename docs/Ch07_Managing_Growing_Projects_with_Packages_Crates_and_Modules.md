@@ -328,3 +328,36 @@ error: could not compile `restaurant` due to 2 previous errors
 *清单 7-6：构造清单 7-5 中代码时的编译器错误*
 
 
+怎么回事呢？将 `pub` 关键字加在 `mod hosting` 前面，是把该模组构造为公共模组。有了此修改，那么在能够访问 `front_of_house` 时，就能够访问 `hosting`。但 `hosting` 模组的 *内容（contents）* 仍是私有的；将模组构造为公共模组，并不会将其内容构造为公共的。在模组上的 `pub` 关键字，只是让其祖辈模组中的代码可以引用到他。
+
+清单 7-6 中的错误说到，那个 `add_to_waitlist` 函数是私有的。适用于结构体、枚举、函数即方法等的隐私规则，与适用于模组的一样。
+
+下面就来通过把 `pub` 关键字，添加在 `add_to_waitlist` 函数定义之前，而将其构造为公共函数，如下清单 7-7 所示。
+
+文件名：`src/lib.rs`
+
+```rust
+mod front_of_house {
+    pub mod hosting {
+        pub fn add_to_waitlist() {}
+    }
+}
+
+pub fn eat_at_restaurant() {
+    // 绝对路径
+    crate::front_of_house::hosting::add_to_waitlist();
+
+    // 相对路径
+    front_of_house::hosting::add_to_waitlist();
+}
+```
+
+*清单 7-7：把 `pub` 关键字添加到 `mod hosting` 与 `fn add_to_waitlist`，实现从 `eat_at_restaurant` 对该函数的调用*
+
+现在该代码就会编译了！接下来看看那个绝对与相对路径，并再次确认为何添加 `pub` 关键字，就允许遵循 Rust 隐私规则之下，使用到 `add_to_waitlist` 中的这些路径。
+
+在那个绝对路径中，是以这里的代码箱的模组树根部，字面值 `crate` 开始的。随后的 `front_of_house` 模组，即是定义在该代码箱根部的模组。那个 `front_of_house` 模组不是公共模组，但由于 `eat_at_restaurant` 函数是定义在与 `front_of_house`同一模组中（那就是说，`eat_at_restaurant` 与 `front_of_house` 是姊妹关系），因此这里就可以从 `eat_at_restaurant` 函数对 `front_of_house` 进行引用。接下来就是那个被标记了 `pub` 的 `hosting` 模组了。由于这里可以访问 `hosting` 的父模组，因此就可以访问 `hosting`。最后，由于那个 `add_to_waitlist` 函数被 `pub` 标记过，且这里可以访问他的父模组，因此该函数调用就生效了！
+
+而在那个相对路径中，除开其中的第一步之外，其逻辑与绝对路径是同样的：与从代码箱根开始不同，该相对路径是从 `front_of_house` 处开始的。这个 `front_of_house` 模组，是定义在与 `eat_at_restaurant` 同样的模组中的，因此这个从 `eat_at_restaurant` 定义所在模组开始的相对路径，是有效的。随后由于 `hosting` 与 `add_to_waitlist` 都是以 `pub` 关键字标记过，那么该路径其余部分都是工作的，进而此函数调用就是有效的！
+
+
