@@ -374,4 +374,32 @@ pub fn eat_at_restaurant() {
 
 ### 以 `super` 关键字起头的相对路径
 
+这里还可通过在路径开头使用 `super` 关键字，构建出在父模组处开始的相对路径。这就跟以 `..` 语法开始的文件系统路径一样。而为什么会希望这样做呢？
 
+设想下面清单 7-8 中的、建模了某位大厨修正了某个不正确点餐，并亲自将其交出给顾客的代码。其中定义在 `back_of_house` 模组中的函数 `fix_incorrect_order`，通过将到 `deliver_order` 的路径，以 `super` 作为开头进行指明，而调用了定义在父模组中的该 `deliver_order` 函数：
+
+文件名：`src/lib.rs`
+
+```rust
+fn deliver_order() {}
+
+mod back_of_house {
+    fn fix_incorrect_order() {
+        cook_order();
+        super::deliver_order();
+    }
+
+    fn cook_order() {}
+}
+```
+
+*清单 7-8：使用以 `super` 开头的相对路径调用某个函数*
+
+
+该 `fix_incorrect_order` 函数是在 `back_of_house` 模组中的，因此就可以使用 `super` 关键字，来前往到 `back_of_house` 的父模组，即这里的 `crate`，代码箱的根。在那里，就会查找 `deliver_order` 并找到了他。成功！那么这里就会当作这个 `back_of_house` 模组与这个 `deliver_order` 函数，大概会保持着相互之间同样的关系，并在往后决定对该代码箱的模组树重新组织时，他们会一起被移动。因此，这里使用了 `super`，如此在以后此代码被移入到某个不同模组时，要更新代码的地方就会少一些。
+
+### 将结构体与枚举构造为公共项目
+
+**Making Structs and Enums Public**
+
+这里还可以使用 `pub` 关键字，来将结构体与枚举指定为公开项目，不过有着一些额外情况。
