@@ -269,3 +269,62 @@ Rust 中私有性的工作方式，为全部程序项目（函数、方法，结
 Rust 选择了让模组系统以这种方式发挥作用，这样默认就将内部实现细节给隐藏了。如此一来，就清楚可修改内部代码的哪些部分，而不会破坏外部代码。不过可通过使用 `pub` 关键字将某个程序项目构造为公共项目，而把子模组代码内部部分，暴露给外部的祖辈模组。
 
 ### <a id="exposing-paths-with-the-pub-keyword"></a> 以 `pub` 关键字对路径加以暴露
+
+这里来回到清单 7-4 中告知 `hosting` 模组为私有的错误。这里希望在父模组中的 `eat_at_restaurant` 函数，有着到那个子模组中的 `add_to_waitlist` 函数的访问权限，因此就要将 `hosting` 模组以 `pub` 关键字标记起来，如下面清单 7-5 中所示。
+
+文件名：`src/lib.rs`
+
+```rust
+mod front_of_house {
+    pub mod hosting {
+        fn add_to_waitlist() {}
+    }
+}
+
+pub fn eat_at_restaurant() {
+    // 绝对路径
+    crate::front_of_house::hosting::add_to_waitlist();
+
+    // 相对路径
+    front_of_house::hosting::add_to_waitlist();
+}
+```
+
+*清单 7-5：将 `hosting` 模组声明为 `pub` 以在 `eat_at_restaurant` 中使用他*
+
+不幸的是，清单 7-5 中的代码仍以错误告终，如下清单 7-6 中所示：
+
+```console
+$ cargo build
+   Compiling restaurant v0.1.0 (/home/peng/rust-lang/restaurant)
+error[E0603]: function `add_to_waitlist` is private
+ --> src/lib.rs:9:37
+  |
+9 |     crate::front_of_house::hosting::add_to_waitlist();
+  |                                     ^^^^^^^^^^^^^^^ private function
+  |
+note: the function `add_to_waitlist` is defined here
+ --> src/lib.rs:3:9
+  |
+3 |         fn add_to_waitlist() {}
+  |         ^^^^^^^^^^^^^^^^^^^^
+
+error[E0603]: function `add_to_waitlist` is private
+  --> src/lib.rs:12:30
+   |
+12 |     front_of_house::hosting::add_to_waitlist();
+   |                              ^^^^^^^^^^^^^^^ private function
+   |
+note: the function `add_to_waitlist` is defined here
+  --> src/lib.rs:3:9
+   |
+3  |         fn add_to_waitlist() {}
+   |         ^^^^^^^^^^^^^^^^^^^^
+
+For more information about this error, try `rustc --explain E0603`.
+error: could not compile `restaurant` due to 2 previous errors
+```
+
+*清单 7-6：构造清单 7-5 中代码时的编译器错误*
+
+
