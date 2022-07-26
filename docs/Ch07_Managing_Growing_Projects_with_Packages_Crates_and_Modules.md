@@ -482,3 +482,27 @@ pub fn eat_at_restaurant() {
 ### 使用 `use` 关键字将路径带入到作用域
 
 或许到目前为止前面写的那些调用函数的路径，看起来相当不方便的长还重复。比如在清单 7-7 中，对于到 `add_to_waitlist` 函数，无论是选择绝对路径还是相对路径，每次在打算调用 `add_to_waitlist` 时，都必须还要指明 `front_of_house` 与 `hosting`。幸运的是，有简化此过程的办法。这里可以使用 `use` 关键字，一次性创建出到某个路径的快捷方式，尔后就可以在该作用域中所有地方，使用这个较短的名字了。
+
+在下面清单 7-11 中，就将 `crate::front_of_house::hosting` 模组，带入到了 `eat_at_restaurant` 函数的作用域，因此就只须指明 `hosting::add_to_wait`，来在 `eat_at_restaurant` 中调用这个 `add_to_waitlist` 函数了。
+
+文件名：`src/lib.rs`
+
+```rust
+mod front_of_house {
+    pub mod hosting {
+        pub fn add_to_waitlist() {}
+    }
+}
+
+use crate::front_of_house::hosting;
+
+pub fn eat_at_restaurant() {
+    hosting::add_to_waitlist();
+}
+```
+
+*清单 7-11：使用 `use` 关键字，将模组带入到作用域*
+
+在作用域中将 `use` 关键字与一个路径一同使用，与在文件系统中创建一个符号链接类似。通过在该代码箱根本添加 `use crate::front_of_house::hosting`，在那个作用域中，现在 `hosting` 就是一个有效的名字了，就跟这个 `hosting` 模组已在该代码箱根中被定义过了一样。使用 `use` 关键字带入到作用域中的那些路径，与其他任何路径一样，同样会对隐私性进行检查。
+
+
