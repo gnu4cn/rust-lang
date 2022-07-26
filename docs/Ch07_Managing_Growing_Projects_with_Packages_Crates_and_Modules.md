@@ -505,4 +505,75 @@ pub fn eat_at_restaurant() {
 
 在作用域中将 `use` 关键字与一个路径一同使用，与在文件系统中创建一个符号链接类似。通过在该代码箱根本添加 `use crate::front_of_house::hosting`，在那个作用域中，现在 `hosting` 就是一个有效的名字了，就跟这个 `hosting` 模组已在该代码箱根中被定义过了一样。使用 `use` 关键字带入到作用域中的那些路径，与其他任何路径一样，同样会对隐私性进行检查。
 
+请注意 `use` 关键字只会针对在其出现的特定作用域，创建快捷方式。下面清单 7-12 将 `eat_at_restaurant` 移入到了一个新的名为 `customer` 的子模组，随后这就与那个 `use` 语句，属于不同作用域了，进而那个函数体就不会编译：
+
+文件名：`src/lib.rs`
+
+```rust
+mod front_of_house {
+    pub mod hosting {
+        pub fn add_to_waitlist() {}
+    }
+}
+
+use crate::front_of_house::hosting;
+
+
+mod customer {
+    pub fn eat_at_restaurant() {
+        hosting::add_to_waitlist();
+    }
+}
+```
+
+下面的编译器错误，显示那个快捷方式不再适用于 `customer` 模组内部：
+
+```console
+$ cargo build
+   Compiling restaurant v0.1.0 (/home/peng/rust-lang/restaurant)
+error[E0433]: failed to resolve: use of undeclared crate or module `hosting`
+  --> src/lib.rs:33:9
+   |
+33 |         hosting::add_to_waitlist();
+   |         ^^^^^^^ use of undeclared crate or module `hosting`
+
+warning: unused import: `crate::front_of_house::hosting`
+  --> src/lib.rs:28:5
+   |
+28 | use crate::front_of_house::hosting;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+For more information about this error, try `rustc --explain E0433`.
+warning: `restaurant` (lib) generated 1 warning
+error: could not compile `restaurant` due to previous error; 1 warning emitted
+```
+
+请注意这里还给出了那个 `use` 在其作用域中已不再被使用的告警！为修复此问题，就还要将那个 `use` 语句移入到 `customer` 模组内部，或者在那个 `customer` 模组内部，以 `super::hosting` 来引用父模组中的那个快捷方式。
+
+### 惯用的 `use` 路径创建
+
+在上面的清单 7-11 中，你或许会想，为什么那里指定了 `use crate::front_of_house::hosting`，并随后在 `eat_at_restaurant` 函数中调用了 `hosting::add_to_waitlist`，而不是将那个 `use` 路径，指定为到 `add_to_waitlist` 函数的整个路径，而达到同样目的，即如下清单 7-13 中那样。
+
+文件名：`src/lib.rs`
+
+```rust
+mod front_of_house {
+    pub mod hosting {
+        pub fn add_to_waitlist() {}
+    }
+}
+
+use crate::front_of_house::hosting::add_to_waitlist;
+
+pub fn eat_at_restaurant() {
+    add_to_waitlist();
+}
+```
+
+*清单 7-13：单调的使用 `use` 将 `add_to_waitlist` 带入到作用域，bringing the `add_to_waitlist` function into scope with `use`, which is unidiomatic*
+
+尽管清单 7-11 与 7-13 都完成了同样任务，但清单 7-11 则是以 `use` 关键字，将函数带入到作用域的惯用方式。以 `use` 关键字将函数的父模组带入到作用域中，就意味着在调用该函数时，必须指明那个父模组。而在调用该函数时指明其父模组，就让该函数是个非本地函数这一事实变得明了，与此同时仍最大程序减少了那个函数完整路径的重复。而清单 7-13 中的代码，对于 `add_to_waitlist` 在何处创建并不清楚。
+
 
