@@ -1,4 +1,9 @@
 mod back_of_house {
+    pub enum Appetizer {
+        Soup,
+        Salad,
+    }
+
     pub struct Breakfast {
         pub toast: String,
         seasonal_fruit: String,
@@ -22,5 +27,8 @@ pub fn eat_at_restaurant() {
 
     // 若不把接下来的行注释掉，那么就不会编译；这里是不允许查看或修改
     // 餐食搭配应季水果的
-    meal.seasonal_fruit = String::from("blueberries");
+    // meal.seasonal_fruit = String::from("blueberries");
+    
+    let order1 = back_of_house::Appetizer::Soup;
+    let order2 = back_of_house::Appetizer::Salad;
 }

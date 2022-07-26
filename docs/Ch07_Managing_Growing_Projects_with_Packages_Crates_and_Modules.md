@@ -452,3 +452,27 @@ error[E0616]: field `seasonal_fruit` of struct `Breakfast` is private
 For more information about this error, try `rustc --explain E0616`.
 error: could not compile `restaurant` due to previous error
 ```
+
+还请留意由于 `back_of_restaurant::Breakfast` 有个私有字段，因此该结构体就需要提供一个公开的、构造出`Breakfast` 实例的关联函数（这里将该函数命名为了 `summer`）。若 `Breakfast` 没有这样一个函数，那么由于在 `eat_at_restaurant` 中无法设置那个私有 `seasonal_fruit` 字段的值，因此就没法在 `eat_at_restaurant` 中创建处一个 `Breakfast` 的实例来。
+
+作为对照，在将枚举构造为公开时，该枚举的全部变种此时都是公开的。这里就只需在 `enum` 关键字前的 `pub` 关键字，如下清单 7-10 中所示。
+
+文件名：`src/lib.rs`
+
+```rust
+mod back_of_house {
+    pub enum Appetizer {
+        Soup,
+        Salad,
+    }
+}
+
+pub fn eat_at_restaurant() {
+    let order1 = back_of_house::Appetizer::Soup;
+    let order2 = back_of_house::Appetizer::Salad;
+}
+```
+
+*清单 7-10：将枚举指定为公开，则会将其全部变种构造为公开*
+
+由于这里将那个 `Appetizer` 枚举构造为了公开，因此就可以在 `eat_at_restaurant` 中使用 `Soup` 与 `Salad` 变种。除非枚举的各个变种是公开的，否则枚举就不是非常有用了；
