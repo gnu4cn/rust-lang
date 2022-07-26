@@ -407,4 +407,48 @@ mod back_of_house {
 文件名：`src/lib.rs`
 
 ```rust
+mod back_of_house {
+    pub struct Breakfast {
+        pub toast: String,
+        seasonal_fruit: String,
+    }
 
+    impl Breakfast {
+        pub fn summer(toast: &str) -> Breakfast {
+            Breakfast {
+                toast: String::from(toast),
+                seasonal_fruit: String::from("peaches"),
+            }
+        }
+    }
+}
+
+pub fn eat_at_restaurant() {
+    // 点下一份带有黑麦土司的夏日早餐
+    let mut meal = back_of_house::Breakfast::summer("Rye");
+    meal.toast = String::from("Wheat");
+    println! ("请给我一份 {} 土司", meal.toast);
+
+    // 若不把接下来的行注释掉，那么就不会编译；这里是不允许查看或修改
+    // 餐食搭配应季水果的
+    // meal.seasonal_fruit = String::from("blueberries");
+}
+```
+
+*清单 7-9：一个有着一些公共字段与私有字段的结构体*
+
+由于 `back_of_house::Breakfast` 结构体中的 `toast` 字段是公开的，因此在 `eat_at_restaurant` 中就可以使用点符号，对 `toast` 字段进行写入与读取。请注意由于 `seasonal_fruit` 是私有的，因此这里不能在 `eat_at_restaurant` 中使用那个 `seasonal_fruit` 字段。尝试将那个对 `seasonal_fruit` 字段值进行修改的行解除注释，看看将得到什么样的错误！
+
+
+```console
+$ cargo build
+   Compiling restaurant v0.1.0 (/home/peng/rust-lang/restaurant)
+error[E0616]: field `seasonal_fruit` of struct `Breakfast` is private
+  --> src/lib.rs:25:10
+   |
+25 |     meal.seasonal_fruit = String::from("blueberries");
+   |          ^^^^^^^^^^^^^^ private field
+
+For more information about this error, try `rustc --explain E0616`.
+error: could not compile `restaurant` due to previous error
+```
