@@ -664,3 +664,30 @@ pub fn eat_at_restaurant() {
 ```
 
 *清单 7-17：在新作用域中使用 `pub use` 将某个名字构造为对全部代码可用（making a name available for any code to use from a new scope with `pub use`）*
+
+在这个修改之前，外部代码不得不通过使用路径 `restaurant::front_of_house::hosting::add_to_waitlist()`，来调用那个 `add_to_waitlist` 函数。现在既然该 `pub use` 已将这个 `hosting` 模组，从根模组中重新导出，那么外部代码就可以使用 `restaurant::hosting::add_to_waitlist()` 路径予以代替了。
+
+在所编写代码内部结构，与那些调用代码的程序员对该领域有着不同设想时，重导出就是有用的了。比如，在这个饭馆的比喻中，运营该饭馆的人设想的是“前厅”与“后厨”。但造访饭馆的食客，或许不会用这样的词汇，来认识饭馆的这些部位。有了 `pub use`，就可以一种结构来编写代码，而以另一种结构将代码暴露出来。这样做就让这个库，同时对在这个库上编写代码的程序员，与调用这个库的程序员，具备良好的组织。在第 14 章的 [“运用 `pub use` 导出便利的公共 API”](Ch14_More_about_Cargo_and_Crates_io.md#exporting-a-convenient-public-api-with-pub-use) 小节，将会看到另一个 `pub use` 的示例，并了解他是怎样影响到代码箱的文档。
+
+
+### 运用外部 Rust 包
+
+在第 2 章中，那里编写了个使用了名为 `rand` 的外部包，来取得一个随机数的猜数游戏项目。为在项目中使用 `rand`，那里添加了下面这行到 `Cargo.toml` 文件：
+
+文件名：`Cargo.toml`
+
+```toml
+rand = `0.8.3`
+```
+
+将 `rand` 作为一个依赖，添加到 `Cargo.toml` 就告诉了 Cargo，去 [crates.io](https://crates.io/) 下载那个 `rand` 包和全部依赖，进而令到 `rand` 对此项目可用。
+
+随后，为了将 `rand` 的一些定义带入到所编写项目包中，那里添加了一个以那个代码箱名字，即 `rand`，开头的，以及那里打算要带入到作用域的那些条目的 `use` 行。回顾第 2 章中的 [“生成一个随机数”](Ch02_Programming_a_Guessing_Game.md#generating-a-random-number) 小节，那里就将那个 `Rng` 特质带入到了作用域，并调用了 `rand::thread_rng` 函数：
+
+```rust
+use rand::Rng;
+
+fn main() {
+    let secret_number = rand::thread_rng().gen_rang(1..=100);
+}
+```
