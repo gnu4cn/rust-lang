@@ -637,3 +637,30 @@ fn function2() -> io::IoResult {
 
 
 在这里的第二个 `use` 语句中，就选择了 `IoResult` 作为 `std::io::Result` 类型的新名字，这就不会与同时带入到作用域的、来自 `std::fmt` 的 `Result` 冲突了。清单 7-15 与清单 7-16 都被当作惯用方式，因此选择哪个就随你所愿了！
+
+
+### 使用 `pub use` 将名字重新导出
+
+**Re-exporting Names with `pub use`**
+
+在以 `use` 关键字将某个名字带入到作用域中时，在新的作用域中可以的这个名字是私有的。为了其他调用这个代码的其他代码，能够对那个带入的名字，像定义在调用代码作用域中定义的名字一样，对此名字进行引用，那么就可以结合运用 `pub` 与 `use` 关键字。由于这里是将某个程序项目带入到作用域，而又同时将那个程序项目构造为可被其他代码将其带入他们的作用域，因此该技巧被称为 *重导出（re-exporting）*。
+
+下面清单 7-17 展示了之前清单 7-11 对应的，将根模组中 `use` 修改为了 `pub use`。
+
+文件名：`src/lib.rs`
+
+```rust
+mod front_of_house {
+    pub mod hosting {
+        pub fn add_to_waitlist() {}
+    }
+}
+
+pub use crate::front_of_house::hosting;
+
+pub fn eat_at_restaurant() {
+    hosting::add_to_waitlist();
+}
+```
+
+*清单 7-17：在新作用域中使用 `pub use` 将某个名字构造为对全部代码可用（making a name available for any code to use from a new scope with `pub use`）*
