@@ -12,7 +12,7 @@ Rust 有着数种实现对代码组织进行管理的特性，包括哪些细节
 
 - **代码包（packages）**：实现代码箱（crates）的构建、测试与分享的 Cargo 特性；
 - **代码箱（crates）**：产生出库或可执行文件的模组树（a tree of modules that produces a library or executable）；
-- **模组（modules）**与 **`use`关键字**：实现对代码组织、作用域及路径私有化的控制（let you control the organization, scope, and privacy of paths）；
+- **模组（modules）** 与 **`use`关键字**：实现对代码组织、作用域及路径私有化的控制（let you control the organization, scope, and privacy of paths）；
 - **路径（paths）**：对结构体、函数或模组等进行命名的方式（a way of naming an item, such as a struct, function, or module）。
 
 在本章中，就要涉及到这些特性，讨论到他们之间互动的原理，并就如何使用这些特性来对作用域进行管理。在本章结束时，就会对 Rust 的模组系统有扎实掌握，并能够像专业 Rust 程序员那样，以作用域来编写程序！
@@ -182,7 +182,7 @@ crate
 
 模组树或许会令人想到计算机上文件系统的目录树；这可是一个极为恰当的类比！就跟文件系统中的目录一样，使用模组是为对代码进行组织。而与目录中的那些文件一样，这里是需要某种找到那些模组的方式的。
 
-## 用于对目录树中某个项目进行引用的路径
+## <a id="paths-for-referring-to-an-item-in-the-module-tree"></a> 用于对目录树中某个项目进行引用的路径
 
 **Paths for Referring to an Item in the Module Tree**
 
@@ -764,4 +764,40 @@ use std::collections::*;
 
 通常在测试时，要将正在测试的全部程序项目带入到 `tests` 模组，才使用这个全局操作符；在第 11 章中的 [怎样编写测试](Ch11_Writing_Automated_Tests.md#how-to-write-tests) 小节，就会讲到这个问题。在前奏模式（the prelude pattern）中，有时也会用到全局操作符：请参阅 [标准库文档](https://doc.rust-lang.org/std/prelude/index.html#other-preludes)，了解有关更多前奏模式的知识。
 
+## 将那些模组拆分为不同文件
 
+**Separating Modules into Different Files**
+
+到目前为止，本章的全部示例，都是将多个模组定义在一个文件中的。在这些模组变得大起来时，就会想要将他们的定义，迁移到单独文件，从而令到代码易于导览。
+
+比如，这里就从之前清单 7-17 中的代码开始，并将那些模组提取到文件中，而非将所有那些模组都定义在那个代码箱根文件里。在此情况下，代码箱根文件为 `src/lib.rs`，但这个过程同样对那些根文件为 `src/main.rs` 的二进制代码箱有效。
+
+首先，会将那个 `front_of_house` 模组，提取到他自己的文件。要移除 `front_of_house` 模组花括号里头的代码，而仅留下 `mod front_of_house;` 语句声明，这样那个 `src/lib.rs` 就会包含如下清单 7-21 中展示的代码了。请注意在创建出后面清单 7-22 中的 `src/front_of_house.rs` 文件之前，这是不会编译的。
+
+文件名：`src/lib.rs`
+
+```rust
+mod front_of_house; 
+
+pub use crate::front_of_house::hosting;
+
+pub fn eat_at_restaurant() {
+    hosting::add_to_waitlist();
+}
+```
+
+*清单 7-21：对模组代码体将在 `src/front_of_house.rs` 中的 `front_of_house` 模组进行声明*
+
+接下来，就要把原先在花括号中的代码，放入到一个新的名为 `src/front_of_house.rs` 文件中，如下清单 7-22 中所示。由于编译器在该代码箱根中，找到了名字 `front_of_house`，因此他就明白要在这个文件中看看。
+
+文件名：`src/front_of_house.rs`
+
+```rust
+pub mod hosting {
+    pub fn add_to_waitlist() {}
+}
+```
+
+*清单 7-22：在文件 `src/front_of_house.rs` 中那个 `front_of_house` 模组的一些定义*
+
+请注意在模组树中的某处，只需使用 `mod` 声明，而一次性地将某个文件的内容加载进来。一旦编译器获悉该文件是项目的一部分（并因已放置 `mod` 语句的位置，而了解到被加载代码在模组树中所处的位置），项目中的其他文件，则应使用之前 [用于引用模组树中项目的路径](#paths-for-referring-to-an-item-in-the-module-tree) 小节中，所讲的到模组声明处的路径，来引用那个文件中的代码。也就是说，这里的 `mod` *并非* 一种其他编程语言所有的 “include” 操作。
