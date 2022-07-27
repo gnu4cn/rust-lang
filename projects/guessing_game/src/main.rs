@@ -1,7 +1,5 @@
 use rand::Rng;
-use std::cmp::Ordering;
-use std::io;
-use std::process;
+use std::{cmp::Ordering, io, process};
 
 fn main() {
     loop {
