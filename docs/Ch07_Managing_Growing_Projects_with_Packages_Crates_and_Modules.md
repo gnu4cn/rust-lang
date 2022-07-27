@@ -760,4 +760,8 @@ use std::io::{self, Write};
 use std::collections::*;
 ```
 
+这个 `use` 语句，将定义在 `std::collections` 中的全部公开项目，都带入到了当前作用域。在使用这个全局操作符时要当心！全局带入，会令到更难于分清哪些名字是作用域中的，以及在当前程序中用到的名字，是在何处定义的。
+
+通常在测试时，要将正在测试的全部程序项目带入到 `tests` 模组，才使用这个全局操作符；在第 11 章中的 [怎样编写测试](Ch11_Writing_Automated_Tests.md#how-to-write-tests) 小节，就会讲到这个问题。在前奏模式（the prelude pattern）中，有时也会用到全局操作符：请参阅 [标准库文档](https://doc.rust-lang.org/std/prelude/index.html#other-preludes)，了解有关更多前奏模式的知识。
+
 
