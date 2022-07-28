@@ -820,4 +820,20 @@ pub mod hosting;
 pub fn add_to_waitlist() {}
 ```
 
+相反如果将 `hosting.rs` 放在 `src` 目录，那么编译器就会以为 `hosting.rs` 的代码，是在声明于代码箱根部的 `hosting` 模组中的，而不是那个 `front_of_house` 模组的子模组中的。编译器获悉要查看哪个文件，来找到模组代码所遵循的规则，意味着目录与文件的结构，与模组树结构更为贴切。
 
+> **备用文件路径**
+>
+> 本小节讲的是 Rust 编译器使用的最惯用文件路径；但较早的文件路径仍被支持。
+>
+> 对于定义在代码箱根部的名为 `front_of_house` 模组，编译器会在下面这些地方查找该模组的代码：
+
+- `src/front_of_house.rs` （即这里讲到的）；
+- `src/front_of_house/mod.rs` （较早的，仍被支持的路径）。
+
+> 而对于作为 `front_of_house` 的子模组的名为 `hosting` 的模组，编译器会在以下地方查找该模组的代码：
+
+- `src/front_of_house/hosting.rs` （即这里讲到的）；
+- `src/front_of_house/hosting/mod.rs` （较早的，仍被支持的路径）。
+
+> 
