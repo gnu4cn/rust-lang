@@ -800,4 +800,24 @@ pub mod hosting {
 
 *清单 7-22：在文件 `src/front_of_house.rs` 中那个 `front_of_house` 模组的一些定义*
 
-请注意在模组树中的某处，只需使用 `mod` 声明，而一次性地将某个文件的内容加载进来。一旦编译器获悉该文件是项目的一部分（并因已放置 `mod` 语句的位置，而了解到被加载代码在模组树中所处的位置），项目中的其他文件，则应使用之前 [用于引用模组树中项目的路径](#paths-for-referring-to-an-item-in-the-module-tree) 小节中，所讲的到模组声明处的路径，来引用那个文件中的代码。也就是说，这里的 `mod` *并非* 一种其他编程语言所有的 “include” 操作。
+请注意在模组树中的某处，只需使用 `mod` 声明，而一次性地将某个文件的内容加载进来。一旦编译器获悉该文件是项目的一部分（并因已放置 `mod` 语句的位置，而了解到被加载代码在模组树中所处的位置），项目中的其他文件，则应使用之前 [用于引用模组树中项目的路径](#paths-for-referring-to-an-item-in-the-module-tree) 小节中，所讲的到模组声明处的路径，来引用那个文件中的代码。也就是说，这里的 `mod` *并非* 其他编程语言有的那种 “include” 操作。
+
+接下来，就要将那个 `hosting` 模组，提取到他自己的文件了。而由于 `hosting` 是 `front_of_house` ，而非根模组的子模组，因此过程略有不同。`hosting` 模组的文件，将在一个命名为在模组树中其位置的目录中。
+
+这里要将 `src/front_of_house.rs` 文件，修改为只包含 `hosting` 模组声明，而作为迁移 `hosting` 模组的开始：
+
+文件名：`src/front_of_house.rs`
+
+```rust
+pub mod hosting;
+```
+
+随后就要创建一个 `src/front_of_house` 的目录，以及一个文件 `src/front_of_house/hosting.rs`，来包含在 `hosting` 模组中构造的那些定义：
+
+文件名：`src/front_of_house/hosting.rs`
+
+```rust
+pub fn add_to_waitlist() {}
+```
+
+
