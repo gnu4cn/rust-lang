@@ -1,13 +1,8 @@
 fn main() {
-    let v = vec! [1, 2, 3, 4];
+    let v = vec! [1, 2, 3, 4, 5];
 
-    let third: &i32 = &v[2];
-    println! ("第三个元素为 {}", third);
-
-    match v.get(2) {
-        Some(third) => println! ("第三个元素为 {}", third),
-        None => println! ("没有第三个元素。"),
-    }
+    let does_not_exist = &v[100];
+    let does_not_exist = v.get(100);
 
     // dbg! (v);
 }
